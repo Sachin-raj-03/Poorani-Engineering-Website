@@ -1,17 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Routes, Route, useNavigate, useParams, Link } from 'react-router-dom';
 import { 
   Menu, X, Phone, Mail, MapPin, 
   ArrowRight, CheckCircle2, 
-  Send, Factory, Package, Users, Building2, MessageSquare
+  Send, Factory, Package, Users, Building2, MessageSquare, Clock,
+  ChevronLeft, ChevronRight, ShoppingCart, Info, Activity, Flame
 } from 'lucide-react';
 import { GlowingEffect } from "@/components/ui/glowing-effect";
+import { Footer } from "@/components/ui/footer-section";
+import {
+  Stories,
+  StoriesContent,
+  Story,
+  StoryAuthor,
+  StoryAuthorImage,
+  StoryAuthorName,
+  StoryImage,
+  StoryOverlay,
+  StoryTitle,
+} from '@/components/ui/stories-carousel';
 
 interface CategoryCardProps {
   title: string;
   img: string;
   items?: string[];
   icon: React.ElementType;
+  onExplore?: () => void;
 }
 
 const Navbar = () => {
@@ -37,11 +52,11 @@ const Navbar = () => {
       isScrolled ? 'bg-black/90 backdrop-blur-md border-b border-zinc-900 py-3' : 'bg-transparent py-5'
     }`}>
       <div className="container mx-auto px-6 md:px-10 flex justify-between items-center">
-        <div className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <span className="text-2xl md:text-3xl font-times font-bold tracking-tight text-white italic">
             Poorani Engineering
           </span>
-        </div>
+        </Link>
 
         <div className="hidden md:flex items-center gap-10">
           {navLinks.map((link) => (
@@ -98,6 +113,233 @@ const Navbar = () => {
   );
 };
 
+const CategoryPage = () => {
+  const { categoryName } = useParams();
+  const navigate = useNavigate();
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+  // Common descriptions for categories
+  const categoryDescriptions: Record<string, string> = {
+    "Display counter": "Our premium display counters are designed to showcase your bakery and confectionery products with maximum visibility. Featuring high-clarity tempered glass and integrated LED lighting, these counters maintain optimal temperature while presenting your items elegantly.",
+    "Dining table": "Built for high-traffic environments, our stainless steel dining tables combine extreme durability with easy-to-clean hygienic surfaces. Perfect for industrial canteens, school mess halls, and commercial food courts.",
+    "Snacks counter": "Versatile and efficient snacks counters designed for quick-service environments. These units integrate storage, heating, and serving areas into a single ergonomic workstation for peak operational performance.",
+    "Tea stall": "Professional-grade mobile and stationary tea stalls engineered for high-volume service. These units feature reinforced burner spaces and ample storage for all brewing essentials.",
+    "Juice stall": "Hygienic and stylish juice extraction stations made from food-grade SS304. Designed to handle high-volume fruit processing while maintaining a clean, professional aesthetic for customers."
+  };
+
+  const commonDescription = categoryDescriptions[categoryName || ""] || 
+    `Discover our premium range of ${categoryName} manufacturing equipment. Precisely engineered for maximum durability, commercial hygiene, and everyday operational efficiency. All products adapt perfectly to intensive industrial usage, ensuring long-lasting performance and sleek integration into your professional environment.`;
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`http://localhost:8000/api/products?category=${categoryName}`);
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+    window.scrollTo(0, 0);
+  }, [categoryName]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (selectedIndex === null) return;
+
+      if (e.key === 'Escape') setSelectedIndex(null);
+      if (e.key === 'ArrowRight') setSelectedIndex((prev) => (prev !== null && prev < products.length - 1 ? prev + 1 : prev));
+      if (e.key === 'ArrowLeft') setSelectedIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : prev));
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedIndex, products.length]);
+
+  return (
+    <div className="min-h-screen bg-black text-white py-32 px-6 md:px-10">
+      <div className="container mx-auto">
+        <button 
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors mb-12 uppercase text-[10px] font-black tracking-widest group"
+        >
+          <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Home
+        </button>
+
+        <div className="mb-20">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter mb-4 leading-none italic font-times">{categoryName}</h1>
+            <div className="w-32 h-2 bg-blue-600 rounded-full mb-10" />
+          </motion.div>
+        </div>
+
+        <div className="flex items-center justify-between mb-10 border-b border-zinc-900 pb-10">
+           <div>
+              <h2 className="text-2xl font-black uppercase tracking-tight mb-2">Product Gallery</h2>
+              <p className="text-zinc-600 text-xs font-bold uppercase tracking-widest italic">{products.length} Items Available</p>
+           </div>
+           <div className="flex gap-4">
+              <div className="w-10 h-10 rounded-full border border-zinc-800 flex items-center justify-center text-zinc-600"><Activity size={16}/></div>
+           </div>
+        </div>
+
+        {selectedIndex !== null && (
+          <AnimatePresence>
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-3xl"
+              onClick={() => setSelectedIndex(null)}
+            >
+              <button 
+                className="absolute top-8 right-8 text-white/50 hover:text-white transition-colors z-[110] p-4 bg-zinc-900/50 rounded-full border border-zinc-800"
+                onClick={() => setSelectedIndex(null)}
+              >
+                <X size={32} />
+              </button>
+
+              {/* Navigation Buttons */}
+              <button 
+                disabled={selectedIndex === 0}
+                className={`absolute left-4 md:left-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors z-[110] p-4 bg-zinc-900/50 rounded-full border border-zinc-800 ${selectedIndex === 0 ? 'opacity-20 cursor-not-allowed' : 'opacity-100'}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : prev));
+                }}
+              >
+                <ChevronLeft size={32} />
+              </button>
+
+              <button 
+                disabled={selectedIndex === products.length - 1}
+                className={`absolute right-4 md:right-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors z-[110] p-4 bg-zinc-900/50 rounded-full border border-zinc-800 ${selectedIndex === products.length - 1 ? 'opacity-20 cursor-not-allowed' : 'opacity-100'}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedIndex((prev) => (prev !== null && prev < products.length - 1 ? prev + 1 : prev));
+                }}
+              >
+                <ChevronRight size={32} />
+              </button>
+              
+              <motion.div 
+                key={selectedIndex}
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (selectedIndex < products.length - 1) {
+                    setSelectedIndex(selectedIndex + 1);
+                  }
+                }}
+                className={`relative max-w-5xl w-full flex flex-col items-center justify-center gap-12 group ${selectedIndex === products.length - 1 ? 'cursor-default' : 'cursor-pointer'}`}
+              >
+                <div className="relative w-full flex items-center justify-center">
+                  <img 
+                    src={products[selectedIndex].image_url} 
+                    alt="Full view" 
+                    className="max-w-full max-h-[70vh] object-contain rounded-2xl shadow-[0_0_100px_rgba(37,99,235,0.2)] border border-zinc-800/50 transition-all duration-500" 
+                  />
+                </div>
+
+                {/* Thumbnail Strip */}
+                <div className="flex items-center gap-3 px-4 py-4 bg-zinc-900/30 backdrop-blur-md rounded-2xl border border-zinc-800/50 max-w-full overflow-x-auto no-scrollbar" onClick={(e) => e.stopPropagation()}>
+                    {products.map((p, i) => (
+                        <button
+                            key={i}
+                            onClick={() => setSelectedIndex(i)}
+                            className={`relative shrink-0 w-16 h-12 md:w-20 md:h-14 rounded-lg overflow-hidden transition-all duration-300 border-2 ${
+                                selectedIndex === i ? 'border-blue-500 scale-110 shadow-[0_0_20px_rgba(59,130,246,0.5)]' : 'border-transparent opacity-40 hover:opacity-100'
+                            }`}
+                        >
+                            <img src={p.image_url} alt="Thumbnail" className="w-full h-full object-cover" />
+                        </button>
+                    ))}
+                </div>
+
+                <div className="text-center">
+                   <p className="text-zinc-500 text-[10px] uppercase font-black tracking-[0.5em]">
+                     Poorani Engineering Works • Image {selectedIndex + 1} of {products.length}
+                   </p>
+                </div>
+              </motion.div>
+            </motion.div>
+          </AnimatePresence>
+        )}
+
+        {loading ? (
+          <div className="flex items-center justify-center h-64 mb-20">
+            <div className="w-12 h-12 border-4 border-zinc-800 border-t-blue-600 rounded-full animate-spin" />
+          </div>
+        ) : products.length > 0 ? (
+          <Stories className="mb-20">
+            <StoriesContent>
+              {products.map((product, idx) => (
+                <Story 
+                  key={product.id || idx} 
+                  className="aspect-[4/5]" 
+                  onClick={() => setSelectedIndex(idx)}
+                >
+                  <StoryImage alt={product.name || `${categoryName} Item`} src={product.image_url} />
+                  <StoryOverlay side="top" />
+                  <StoryOverlay side="bottom" />
+                  <StoryTitle className="truncate font-black text-[10px] uppercase tracking-[0.3em] text-white/90">
+                    {categoryName} • PHOTO {idx + 1}
+                  </StoryTitle>
+                  <StoryAuthor>
+                    <StoryAuthorImage
+                      fallback="PEW"
+                      name="Poorani Engineering"
+                      className="size-8"
+                    />
+                    <StoryAuthorName className="text-[9px] font-black uppercase tracking-[0.2em] text-white/60">View Details</StoryAuthorName>
+                  </StoryAuthor>
+                </Story>
+              ))}
+            </StoriesContent>
+          </Stories>
+        ) : (
+          <div className="text-center py-32 bg-zinc-900/30 rounded-[3rem] border border-zinc-800 border-dashed mb-20">
+            <Package className="w-16 h-16 text-zinc-800 mx-auto mb-6 opacity-50" />
+            <p className="text-zinc-600 uppercase text-xs font-black tracking-widest">Gallery empty for this category</p>
+            <button className="mt-8 bg-zinc-800 text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-zinc-700 transition-all">
+              Request Catalog
+            </button>
+          </div>
+        )}
+
+        <motion.div
+           initial={{ opacity: 0, y: 20 }}
+           whileInView={{ opacity: 1, y: 0 }}
+           viewport={{ once: true }}
+           className="bg-zinc-900/40 border border-zinc-800/50 p-8 md:p-12 rounded-[2rem] backdrop-blur-sm relative overflow-hidden group max-w-4xl"
+        >
+          <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+            <Info className="w-24 h-24 text-blue-500" />
+          </div>
+          <h3 className="text-[10px] font-black uppercase tracking-widest text-blue-500 mb-4">Category Overview</h3>
+          <p className="text-zinc-400 text-lg md:text-xl font-medium leading-relaxed relative z-10">
+            {commonDescription}
+          </p>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
 const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-black text-white">
@@ -134,7 +376,96 @@ const Hero = () => {
   );
 };
 
-const CategoryCard = ({ title, img, items, icon: Icon }: CategoryCardProps) => (
+const CategoryModal = ({ category, onClose }: { category: any, onClose: () => void }) => {
+  if (!category) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }} 
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-xl"
+        onClick={onClose}
+      >
+        <motion.div 
+          initial={{ y: 50, opacity: 0, scale: 0.95 }}
+          animate={{ y: 0, opacity: 1, scale: 1 }}
+          exit={{ y: 20, opacity: 0, scale: 0.95 }}
+          onClick={(e) => e.stopPropagation()}
+          className="bg-zinc-950 border border-zinc-800 w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl flex flex-col md:flex-row relative"
+        >
+          <button 
+            onClick={onClose}
+            className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 hover:bg-white hover:text-black border border-zinc-800 rounded-full flex items-center justify-center text-zinc-400 transition-all backdrop-blur-md"
+          >
+            <X size={20} />
+          </button>
+
+          {/* Left Side: Images */}
+          <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-zinc-800">
+            <div className="w-full h-64 md:h-80 rounded-2xl overflow-hidden relative group shrink-0">
+              <img src={category.img} alt={category.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-80" />
+            </div>
+            {/* Gallery Placeholders */}
+            <div className="grid grid-cols-3 gap-3">
+              {[1, 2, 3].map((i) => (
+               <div key={i} className="aspect-square rounded-xl bg-zinc-900 border border-zinc-800 overflow-hidden flex items-center justify-center group cursor-pointer relative">
+                  <span className="text-zinc-600 text-[10px] font-black uppercase tracking-widest z-10 px-2 text-center leading-tight">Image<br/>{i}</span>
+                  <div className="absolute inset-0 bg-zinc-800/0 group-hover:bg-zinc-800/50 transition-colors" />
+               </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Side: Details */}
+          <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center">
+            <div className="w-16 h-16 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(59,130,246,0.1)]">
+               <category.icon className="w-8 h-8 text-blue-500" />
+            </div>
+            <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight leading-none mb-6">
+              {category.title}
+            </h2>
+            <div className="w-20 h-1 bg-blue-600 rounded-full mb-8" />
+            
+            <p className="text-zinc-400 text-sm md:text-base leading-relaxed mb-8">
+              Discover our premium <strong>{category.title}</strong>, precisely engineered for maximum durability, commercial hygiene, and everyday operational efficiency. All products adapt perfectly to intensive institutional usage, ensuring long-lasting performance and sleek integration into your professional environment.
+            </p>
+            
+            <div className="space-y-4 mb-10 bg-black/50 p-6 rounded-2xl border border-zinc-800/50">
+              <h4 className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Key Advantages</h4>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-4 text-zinc-300">
+                  <div className="w-6 h-6 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0 mt-0.5"><CheckCircle2 className="w-4 h-4 text-blue-500" /></div>
+                  <span className="text-sm font-medium leading-tight">100% Commercial Grade Stainless Steel Material</span>
+                </li>
+                <li className="flex items-start gap-4 text-zinc-300">
+                  <div className="w-6 h-6 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0 mt-0.5"><CheckCircle2 className="w-4 h-4 text-blue-500" /></div>
+                  <span className="text-sm font-medium leading-tight">Precision Welded & Corrosion Resistant Finish</span>
+                </li>
+                <li className="flex items-start gap-4 text-zinc-300">
+                  <div className="w-6 h-6 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0 mt-0.5"><CheckCircle2 className="w-4 h-4 text-blue-500" /></div>
+                  <span className="text-sm font-medium leading-tight">Fully Customizable Dimensions tailored to space</span>
+                </li>
+              </ul>
+            </div>
+
+            <a 
+              href="#inquiry" 
+              onClick={onClose}
+              className="w-full bg-white text-black py-5 rounded-xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-blue-600 hover:text-white transition-all group shadow-[0_0_40px_rgba(255,255,255,0.1)]"
+            >
+              Request Custom Quote <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </a>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
+const CategoryCard = ({ title, img, items, icon: Icon, onExplore }: CategoryCardProps) => (
   <div className="relative h-full rounded-2xl border border-zinc-800 p-1 md:p-1.5 transition-all group">
     <GlowingEffect
       spread={40}
@@ -168,7 +499,9 @@ const CategoryCard = ({ title, img, items, icon: Icon }: CategoryCardProps) => (
             ))}
           </ul>
         )}
-        <button className="w-full py-3 md:py-4 rounded-xl border border-zinc-800 text-zinc-400 font-black text-[9px] md:text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all">
+        <button 
+          onClick={onExplore}
+          className="w-full py-3 md:py-4 rounded-xl border border-zinc-800 text-zinc-400 font-black text-[9px] md:text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all cursor-pointer relative z-10">
           Explore Category
         </button>
       </div>
@@ -191,6 +524,7 @@ const Categories = () => {
     { title: "Oven", icon: Package, img: "/Images%20of%20Cards/Oven_img.png" },
     { title: "Cake machine", icon: Users, img: "/Images%20of%20Cards/Cake%20Machine_img.png" },
     { title: "Domixer", icon: Building2, img: "/Images of Cards/Domixer_img.png" },
+    { title: "Triple range burner", icon: Flame, img: "/Images%20of%20Cards/Triple%20range%20burner_img.png" },
     { title: "Hotbox", icon: Package, img: "/Images%20of%20Cards/Hotbox_img.png" },
     { title: "Folding table", icon: Users, img: "/Images of Cards/Folding Table_img.png" },
     { title: "Shawarma machine", icon: Building2, img: "/Images%20of%20Cards/Shawarma%20machine_img.png" },
@@ -207,7 +541,7 @@ const Categories = () => {
     { title: "Lamp cage", icon: Package, img: "/Images%20of%20Cards/lamp%20cage_img.png" },
     { title: "Baby cradle", icon: Users, img: "/Images%20of%20Cards/Baby%20Cradle_img.png" },
     { title: "Appam Patra(Paniyaram Adupu)", icon: Building2, img: "/Images%20of%20Cards/Paniyaram%20Adupu_img.png" },
-    { title: "Tandoor Oven(Tandoori Adupu)", icon: Package, img: "/Images of Cards/tandoori_img.png" },
+    { title: "Tandoori Adupu", icon: Package, img: "/Images of Cards/tandoori_img.png" },
     { title: "Uruli Stove", icon: Users, img: "/Images of Cards/Uruli Stove_img.png" },
     { title: "BBQ", icon: Building2, img: "/Images of Cards/BBQ_img.png" },
     { title: "SS Door", icon: Package, img: "/Images of Cards/ss door_img.png" },
@@ -215,8 +549,20 @@ const Categories = () => {
     { title: "school desk &bench", icon: Building2, img: "/Images of Cards/school desk &bench_img.png" }
   ];
 
+  const [selectedCategory, setSelectedCategory] = useState<any>(null);
+  const navigate = useNavigate();
+
+  // Stop body scroll when modal is open
+  useEffect(() => {
+    if (selectedCategory) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }, [selectedCategory]);
+
   return (
-    <section id="products" className="py-16 md:py-32 bg-zinc-950">
+    <section id="products" className="py-16 md:py-32 bg-zinc-950 relative">
       <div className="container mx-auto px-4 sm:px-6 md:px-10">
         <div className="text-left max-w-3xl mb-10 md:mb-20">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 md:mb-6 uppercase tracking-tight">Our Products</h2>
@@ -230,157 +576,62 @@ const Categories = () => {
               title={cat.title} 
               icon={cat.icon}
               img={cat.img}
+              onExplore={() => navigate(`/explore/${encodeURIComponent(cat.title)}`)}
             />
           ))}
         </div>
       </div>
+
+      {selectedCategory && (
+        <CategoryModal 
+          category={selectedCategory} 
+          onClose={() => setSelectedCategory(null)} 
+        />
+      )}
     </section>
   );
 };
 
 
-const ContactAndInquiry = () => {
-  return (
-    <section id="inquiry" className="py-16 md:py-32 bg-zinc-950 text-white overflow-hidden relative border-t border-zinc-900">
-      <div className="container mx-auto px-4 sm:px-6 md:px-10 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-20 lg:gap-32 items-start">
-          <div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-6 md:mb-10 leading-[0.95] uppercase tracking-tighter">Ready to build <br /> your facility?</h2>
-            <p className="text-zinc-500 text-base md:text-xl mb-10 md:mb-16 max-w-md font-medium">
-              Contact our designers for a custom quote and 3D layout planning of your equipment requirements.
-            </p>
 
-            <div className="space-y-12">
-              <div className="flex gap-8 items-start">
-                <div className="w-14 h-14 bg-zinc-900 rounded-xl flex items-center justify-center shrink-0 border border-zinc-800">
-                  <Phone className="w-6 h-6 text-zinc-400 font-black" />
-                </div>
-                <div>
-                  <h4 className="font-black text-sm uppercase tracking-widest text-zinc-500 mb-2">Speak to Experts</h4>
-                  <p className="text-xl font-bold">
-                    <a href="tel:+919384543135" className="hover:text-blue-500 transition-colors tracking-tight">+91 93845 43135</a>
-                  </p>
-                  <p className="text-xl font-bold">
-                    <a href="tel:+917708844441" className="hover:text-blue-500 transition-colors tracking-tight">+91 77088 44441</a>
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex gap-8 items-start">
-                <div className="w-14 h-14 bg-zinc-900 rounded-xl flex items-center justify-center shrink-0 border border-zinc-800">
-                  <Mail className="w-6 h-6 text-zinc-400" />
-                </div>
-                <div>
-                  <h4 className="font-black text-sm uppercase tracking-widest text-zinc-500 mb-2">Email Inquiry</h4>
-                  <p className="text-xl font-bold">
-                    <a href="mailto:info@pooraniengineering.com" className="hover:text-blue-500 transition-colors tracking-tight text-sm">info@pooraniengineering.com</a>
-                  </p>
-                </div>
-              </div>
 
-              <div className="flex gap-8 items-start">
-                <div className="w-14 h-14 bg-zinc-900 rounded-xl flex items-center justify-center shrink-0 border border-zinc-800">
-                  <MapPin className="w-6 h-6 text-zinc-400" />
-                </div>
-                <div className="grow">
-                  <h4 className="font-black text-sm uppercase tracking-widest text-zinc-500 mb-2">Factory Address</h4>
-                  <p className="text-zinc-400 text-sm font-medium mb-8 leading-relaxed">
-                    <a href="https://maps.app.goo.gl/kSEzW5BTQ9628ssBA?g_st=aw" target="_blank" rel="noreferrer" className="hover:text-white transition-colors underline decoration-zinc-700 underline-offset-4">
-                      kalapprai Thottam, 3/60-D, Ramanujar temple road, Erumapalayam, Salem, Tamil Nadu 636015
-                    </a>
-                  </p>
-                  
-                  <a href="https://maps.app.goo.gl/kSEzW5BTQ9628ssBA?g_st=aw" target="_blank" rel="noreferrer" className="block rounded-2xl overflow-hidden h-64 bg-zinc-900 border border-zinc-800 shadow-[0_0_50px_rgba(0,0,0,0.5)] group relative">
-                    <div className="absolute inset-0 bg-blue-600/10 group-hover:bg-black/60 transition-all z-10 flex items-center justify-center opacity-0 group-hover:opacity-100 backdrop-blur-[2px]">
-                      <span className="bg-white text-black text-xs font-black uppercase tracking-widest px-6 py-3 rounded-xl flex items-center gap-2 shadow-2xl scale-95 group-hover:scale-100 transition-all duration-300">
-                        <MapPin className="w-4 h-4" /> Open in Maps
-                      </span>
-                    </div>
-                    <iframe 
-                      title="Factory Map"
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3912.871049283726!2d78.1727056!3d11.6252801!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3babef0056b20d35%3A0x466d90f2d3ba71b1!2sPoorani%20engineering%20works!5e0!3m2!1sen!2sin!4v1710864000000!5m2!1sen!2sin"
-                      width="100%" 
-                      height="100%" 
-                      style={{ border: 0, pointerEvents: 'none' }} 
-                      allowFullScreen={true} 
-                      loading="lazy"
-                    />
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-zinc-900 p-10 md:p-14 rounded-3xl border border-zinc-800 shadow-2xl relative">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 blur-[100px] pointer-events-none" />
-            <h3 className="text-white text-3xl font-black mb-10 uppercase tracking-tight">Request Initial Quote</h3>
-            <form className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Your Name</label>
-                  <input type="text" className="w-full bg-black border border-zinc-800/50 rounded-xl p-5 text-white focus:ring-1 ring-zinc-700 transition-all placeholder:text-zinc-700" placeholder="John Doe" />
-                </div>
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Contact Number</label>
-                  <input type="text" className="w-full bg-black border border-zinc-800/50 rounded-xl p-5 text-white focus:ring-1 ring-zinc-700 transition-all placeholder:text-zinc-700" placeholder="+91 00000 00000" />
-                </div>
-              </div>
-              <div className="space-y-3">
-                <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Category</label>
-                <select className="w-full bg-black border border-zinc-800/50 rounded-xl p-5 text-zinc-400 focus:ring-1 ring-zinc-700 transition-all appearance-none cursor-pointer">
-                  <option>Bakery Equipment</option>
-                  <option>Hostel / Bulk Kitchen</option>
-                  <option>Commercial Kitchen</option>
-                  <option>Custom Requirement</option>
-                </select>
-              </div>
-              <div className="space-y-3">
-                <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Message / Dimensions</label>
-                <textarea rows={4} className="w-full bg-black border border-zinc-800/50 rounded-xl p-5 text-white focus:ring-1 ring-zinc-700 transition-all placeholder:text-zinc-700" placeholder="Describe your project size or specific dimensions needed..."></textarea>
-              </div>
-              <button className="w-full bg-blue-600 text-white py-6 rounded-xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-blue-500 transition-all shadow-[0_0_30px_rgba(37,99,235,0.2)] group">
-                Send Inquiry Request <Send className="w-5 h-5 group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const Footer = () => (
-  <footer className="bg-black py-12 md:py-20 border-t border-zinc-900">
-    <div className="container mx-auto px-6 md:px-10">
-      <div className="flex flex-col items-center gap-8 md:flex-row md:justify-between md:gap-12">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl md:text-3xl font-times font-bold tracking-tight text-white italic">
-            Poorani Works
-          </span>
-        </div>
-        
-        <div className="flex gap-8 md:gap-12">
-          {['Materials', 'Mission', 'Inquiry'].map(item => (
-            <a key={item} href="#" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-colors">
-              {item}
-            </a>
-          ))}
-        </div>
-
-        <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 text-center">© 2024 Poorani Engineering Works. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
+const WhatsAppButton = () => (
+  <a
+    href="https://wa.me/919384543135"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[100] bg-[#25D366] text-white p-4.5 rounded-full shadow-[0_10px_40px_rgba(37,211,102,0.4)] hover:scale-110 hover:-translate-y-2 transition-all duration-300 group"
+    aria-label="Enquire on WhatsApp"
+  >
+    <svg 
+      viewBox="0 0 24 24" 
+      width="32" 
+      height="32" 
+      fill="currentColor"
+    >
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+    </svg>
+    <span className="absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-zinc-900 text-white text-[10px] font-black uppercase tracking-widest py-2.5 px-5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-zinc-800 pointer-events-none shadow-2xl backdrop-blur-md">
+      Chat with us
+    </span>
+  </a>
 );
 
 export default function App() {
   return (
     <div className="min-h-screen bg-black font-sans">
       <Navbar />
-      <Hero />
-      <Categories />
-      <ContactAndInquiry />
+      <Routes>
+        <Route path="/" element={
+          <>
+            <Hero />
+            <Categories />
+          </>
+        } />
+        <Route path="/explore/:categoryName" element={<CategoryPage />} />
+      </Routes>
       <Footer />
+      <WhatsAppButton />
     </div>
   );
 }
