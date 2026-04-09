@@ -8,29 +8,30 @@ import cloudinary
 import cloudinary.api
 import cloudinary.uploader
 
-# Secure production config (loads from .env at project root)
-load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env"))
+# Load .env if it exists (for local dev), but prioritize system env vars (for production)
+env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env")
+if os.path.exists(env_path):
+    load_dotenv(env_path)
 
 CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME")
 API_KEY = os.getenv("CLOUDINARY_API_KEY")
 API_SECRET = os.getenv("CLOUDINARY_API_SECRET")
 
-if not all([CLOUD_NAME, API_KEY, API_SECRET]):
-    print("⚠️ WARNING: Cloudinary credentials not found in .env! (Falling back to mock data)")
-else:
-    print(f"✅ Cloudinary connected securely for: {CLOUD_NAME}")
-
 # Cloudinary configuration
-cloudinary.config(
-    cloud_name=CLOUD_NAME,
-    api_key=API_KEY,
-    api_secret=API_SECRET,
-    secure=True
-)
+if all([CLOUD_NAME, API_KEY, API_SECRET]):
+    cloudinary.config(
+        cloud_name=CLOUD_NAME,
+        api_key=API_KEY,
+        api_secret=API_SECRET,
+        secure=True
+    )
+    print(f"✅ Cloudinary connected successfully for: {CLOUD_NAME}")
+else:
+    print("⚠️ WARNING: Cloudinary credentials missing! API will return mock data.")
 
-app = FastAPI(title="SteelCraft Manufacturing API")
+app = FastAPI(title="Poorani Engineering API")
 
-# CORS setup
+# CORS setup for Vercel and Localhost
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -48,37 +49,31 @@ class Product(BaseModel):
     image_url: str
     specifications: dict
 
-class Inquiry(BaseModel):
-    customer_name: str
-    phone: str
-    email: str
-    product_id: Optional[str] = None
-    message: str
-    dimensions: Optional[dict] = None
-
 @app.get("/")
 async def root():
-    return {"message": "Welcome to SteelCraft Manufacturing API"}
+    status = "Connected" if all([CLOUD_NAME, API_KEY, API_SECRET]) else "Warning: No Cloudinary"
+    return {
+        "message": "Welcome to Poorani Engineering API",
+        "cloudinary_status": status,
+        "environment": "Production" if os.getenv("RENDER") else "Development"
+    }
+
+@app.get("/health")
+async def health():
+    return {"status": "healthy"}
 
 @app.get("/api/products")
 async def get_products(category: Optional[str] = None):
-    # Base products (mock data for reference)
+    # Mock data fallback
     base_products = [
-        {"id": "1", "name": "SS Bulk Cooking Range", "category": "Hostel", "description": "Heavy-duty industrial cooking range for large volume preparation.", "image_url": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=2070&auto=format&fit=crop", "specifications": {"material": "SS304"}},
-        {"id": "2", "name": "Glass Display Counter", "category": "Display counter", "description": "Elegant tempered glass counter with internal LED lighting.", "image_url": "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=1974&auto=format&fit=crop", "specifications": {"glass": "Toughened"}},
-        {"id": "3", "name": "4-Seater SS Dining Table", "category": "Dining table", "description": "Durable all-stainless steel dining table for industrial canteens.", "image_url": "https://images.unsplash.com/photo-1615060761096-33973cf0fd00?q=80&w=2070&auto=format&fit=crop", "specifications": {"capacity": "4 Persons"}},
+        {"id": "1", "name": "SS Cooking Range", "category": "Hostel", "description": "Heavy-duty range.", "image_url": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a", "specifications": {"material": "SS304"}},
     ]
 
     if not category:
         return base_products
 
-        # Step 1: Fetch from Cloudinary
     try:
-        # Fetching all resources under 'products/' prefix for better flexibility
-        print(f"\n--- Cloudinary Debug Start ---")
-        print(f"🔍 Website requested category: '{category}'")
-        
-        # Searching with prefix "products/" to catch all categorized items
+        # Fetch photos from Cloudinary products/ folder
         response = cloudinary.api.resources(
             type="upload",
             prefix="products/",
@@ -87,57 +82,36 @@ async def get_products(category: Optional[str] = None):
         )
         
         resources = response.get('resources', [])
-        print(f"📦 Total resources found in Cloudinary 'products/' prefix: {len(resources)}")
-        
         cloudinary_products = []
-        # Normalize category for fuzzy matching (lowercase and alphanumeric only)
         normalized_category = "".join(filter(str.isalnum, category.lower()))
-        print(f"🛠️ Normalized search term: '{normalized_category}'")
         
         for res in resources:
-            public_id_lower = res['public_id'].lower()
-            # Extract folder name (e.g. products/Bainmarie/img -> bainmarie)
-            parts = public_id_lower.split('/')
-            folder_name = parts[1] if len(parts) > 1 else ""
+            public_id_parts = res['public_id'].lower().split('/')
+            folder_name = public_id_parts[1] if len(public_id_parts) > 1 else ""
             normalized_folder = "".join(filter(str.isalnum, folder_name))
             
-            # Match happens if one is inside the other
-            is_match = (normalized_folder in normalized_category and len(normalized_folder) > 2) or \
-                       (normalized_category in normalized_folder and len(normalized_category) > 2) or \
-                       ("trolley" in normalized_folder and "trolly" in normalized_category)
-            
-            if is_match:
-                print(f"✅ MATCH FOUND: Folder '{normalized_folder}' matches category '{normalized_category}'")
-                full_name = res['public_id'].split('/')[-1]
-                display_name = full_name.replace('_', ' ').replace('-', ' ').title()
-                
+            # Match folder to category
+            if normalized_folder in normalized_category or normalized_category in normalized_folder:
+                name = res['public_id'].split('/')[-1].replace('_', ' ').replace('-', ' ').title()
                 cloudinary_products.append({
                     "id": res['public_id'],
-                    "name": display_name,
+                    "name": name,
                     "category": category,
-                    "description": f"High-quality {display_name} manufactured at Poorani Engineering Works.",
-                    "price": None,
+                    "description": f"High-quality {name} from Poorani Engineering.",
                     "image_url": res['secure_url'],
-                    "specifications": {"material": "SS304", "origin": "Salem, India"}
+                    "specifications": {"material": "SS304"}
                 })
-        
-        print(f"📊 Final result: {len(cloudinary_products)} products found.")
-        print(f"--- Cloudinary Debug End ---\n")
         
         if cloudinary_products:
             return cloudinary_products
             
     except Exception as e:
-        print(f"❌ Cloudinary error: {str(e)}")
+        print(f"❌ API Error: {str(e)}")
 
-    # Step 2: Fallback to mock data filter if Cloudinary folder is empty or errors
+    # Final fallback to matching mock data
     return [p for p in base_products if category.lower() in p["category"].lower()]
-
-@app.post("/api/inquiry")
-async def create_inquiry(inquiry: Inquiry):
-    # Here we would save to Supabase
-    return {"status": "success", "message": "Inquiry received. Our team will contact you shortly."}
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
