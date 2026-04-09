@@ -64,66 +64,63 @@ async def health():
 
 @app.get("/api/products")
 async def get_products(category: Optional[str] = None):
-    # Mock data fallback
-    base_products = [
-        {"id": "1", "name": "SS Cooking Range", "category": "Hostel", "description": "Heavy-duty range.", "image_url": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a", "specifications": {"material": "SS304"}},
-    ]
-
     if not category:
-        return base_products
+        return [
+            {"id": "1", "name": "SS Cooking Range", "category": "Hostel", "description": "Heavy-duty range.", "image_url": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a", "specifications": {"material": "SS304"}},
+        ]
 
     try:
-        # Fetch photos from Cloudinary products/ folder
-        response = cloudinary.api.resources(
-            type="upload",
-            prefix="products/",
-            max_results=500,
-            context=True
-        )
+        # SEARCH API is much more powerful to find specific folders
+        # We search specifically for things in the 'products' folder
+        search_query = f"folder:products/* AND resource_type:image"
         
-        resources = response.get('resources', [])
+        print(f"DEBUG: Searching for category: {category}")
+        
+        # We fetch up to 500 images
+        result = cloudinary.Search() \
+            .expression(search_query) \
+            .max_results(500) \
+            .execute()
+        
+        resources = result.get('resources', [])
         cloudinary_products = []
         
-        # Clean the requested category name
+        # Clean target name: "Display counter" -> "displaycounter"
         target = "".join(filter(str.isalnum, category.lower()))
         
         for res in resources:
-            public_id_parts = res['public_id'].lower().split('/')
-            if len(public_id_parts) < 2: continue
+            public_id = res['public_id'].lower()
+            # Path looks like: products/display counter/image1
+            path_parts = public_id.split('/')
+            if len(path_parts) < 2: continue
             
-            # The folder is the part between products/ and the filename
-            folder_name = public_id_parts[1]
-            normalized_folder = "".join(filter(str.isalnum, folder_name))
+            # The folder name is the part after 'products'
+            actual_folder = path_parts[1]
+            normalized_folder = "".join(filter(str.isalnum, actual_folder))
             
-            # SUPER FLEXIBLE MATCHING:
-            # Matches if: 'tandooriadupu' contains 'tandoori' OR 'tandoori' contains 'tandooriadupu'
-            is_match = (normalized_folder in target and len(normalized_folder) > 3) or \
-                       (target in normalized_folder and len(target) > 3) or \
-                       (normalized_folder == target)
-
-            if is_match:
+            # Match if category name is in the folder name or vice versa
+            if (normalized_folder in target) or (target in normalized_folder):
                 filename = res['public_id'].split('/')[-1]
-                # If filename is a timestamp, use the folder name as the title
-                display_name = folder_name.title() if filename.isdigit() else filename.replace('_', ' ').replace('-', ' ').title()
+                # Use Folder Name as the product name for a cleaner look
+                display_name = actual_folder.replace('_', ' ').replace('-', ' ').title()
                 
                 cloudinary_products.append({
                     "id": res['public_id'],
-                    "name": display_name,
+                    "name": f"{display_name} Unit",
                     "category": category,
-                    "description": f"High-quality {display_name} from Poorani Engineering.",
+                    "description": f"Premium {display_name} manufactured by Poorani Engineering Works.",
                     "image_url": res['secure_url'],
                     "specifications": {"material": "SS304", "origin": "Salem, India"}
                 })
         
         if cloudinary_products:
-            # Sort to keep photos from same folder together
-            return sorted(cloudinary_products, key=lambda x: x['name'])
+            # Grouping by name to avoid duplicate titles if many images in same folder
+            return sorted(cloudinary_products, key=lambda x: x['id'])
             
     except Exception as e:
-        print(f"❌ API Error: {str(e)}")
+        print(f"❌ API Search Error: {str(e)}")
 
-    # Final fallback to matching mock data
-    return [p for p in base_products if category.lower() in p["category"].lower()]
+    return []
 
 if __name__ == "__main__":
     import uvicorn
