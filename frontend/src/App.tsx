@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Routes, Route, useNavigate, useParams, Link } from 'react-router-dom';
+
+const VERSION = "1.0.5-DEBUG";
 import { 
   Menu, X, Phone, Mail, MapPin, 
   ArrowRight, CheckCircle2, 

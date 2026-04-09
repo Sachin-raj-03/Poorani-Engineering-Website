@@ -1,10 +1,10 @@
 import os
-from dotenv import load_dotenv
 import cloudinary
 import cloudinary.api
+from dotenv import load_dotenv
 
-# Load .env relative to current script (root level)
-load_dotenv(".env")
+# Load credentials
+load_dotenv()
 
 cloudinary.config(
     cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
@@ -13,23 +13,40 @@ cloudinary.config(
     secure=True
 )
 
-def list_cloudinary_folders():
+def debug_cloudinary():
+    print("[SEARCHING] Searching Cloudinary for all resources...")
     try:
-        # List subfolders in 'products/'
-        response = cloudinary.api.subfolders("products")
-        folders = [f['name'] for f in response['folders']]
-        print(f"📁 Categories found in Cloudinary (under 'products/'):")
-        for f in folders:
-            print(f" - {f}")
-            
-        # Check files in products/
-        res = cloudinary.api.resources(type="upload", prefix="products/", max_results=10)
-        print(f"\n📄 Recent files (total checked: {len(res['resources'])}):")
-        for r in res['resources']:
-            print(f" - {r['public_id']}")
-            
+        # 1. Check all folders
+        print("\n--- FOLDERS FOUND ---")
+        folders = cloudinary.api.root_folders()
+        for f in folders.get('folders', []):
+            print(f"Folder: {f['name']}")
+            try:
+                sub_folders = cloudinary.api.sub_folders(f['name'])
+                for sf in sub_folders.get('folders', []):
+                    print(f"   └── Subfolder: {sf['name']}")
+            except:
+                pass
+
+        # 2. Check all images with 'products/' prefix
+        print("\n--- IMAGES IN 'products/' ---")
+        response = cloudinary.api.resources(type="upload", prefix="products/", max_results=50)
+        resources = response.get('resources', [])
+        
+        if not resources:
+            print("WARNING: No images found with 'products/' prefix.")
+        else:
+            for res in resources:
+                print(f"Photo: {res['public_id']}")
+
+        # 3. Check first 10 images anywhere
+        print("\n--- FIRST 10 IMAGES (ANYWHERE) ---")
+        response = cloudinary.api.resources(type="upload", max_results=10)
+        for res in response.get('resources', []):
+            print(f"Found: {res['public_id']}")
+
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"❌ Error: {str(e)}")
 
 if __name__ == "__main__":
-    list_cloudinary_folders()
+    debug_cloudinary()
