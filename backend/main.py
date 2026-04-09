@@ -83,27 +83,41 @@ async def get_products(category: Optional[str] = None):
         
         resources = response.get('resources', [])
         cloudinary_products = []
-        normalized_category = "".join(filter(str.isalnum, category.lower()))
+        
+        # Clean the requested category name
+        target = "".join(filter(str.isalnum, category.lower()))
         
         for res in resources:
             public_id_parts = res['public_id'].lower().split('/')
-            folder_name = public_id_parts[1] if len(public_id_parts) > 1 else ""
+            if len(public_id_parts) < 2: continue
+            
+            # The folder is the part between products/ and the filename
+            folder_name = public_id_parts[1]
             normalized_folder = "".join(filter(str.isalnum, folder_name))
             
-            # Match folder to category
-            if normalized_folder in normalized_category or normalized_category in normalized_folder:
-                name = res['public_id'].split('/')[-1].replace('_', ' ').replace('-', ' ').title()
+            # SUPER FLEXIBLE MATCHING:
+            # Matches if: 'tandooriadupu' contains 'tandoori' OR 'tandoori' contains 'tandooriadupu'
+            is_match = (normalized_folder in target and len(normalized_folder) > 3) or \
+                       (target in normalized_folder and len(target) > 3) or \
+                       (normalized_folder == target)
+
+            if is_match:
+                filename = res['public_id'].split('/')[-1]
+                # If filename is a timestamp, use the folder name as the title
+                display_name = folder_name.title() if filename.isdigit() else filename.replace('_', ' ').replace('-', ' ').title()
+                
                 cloudinary_products.append({
                     "id": res['public_id'],
-                    "name": name,
+                    "name": display_name,
                     "category": category,
-                    "description": f"High-quality {name} from Poorani Engineering.",
+                    "description": f"High-quality {display_name} from Poorani Engineering.",
                     "image_url": res['secure_url'],
-                    "specifications": {"material": "SS304"}
+                    "specifications": {"material": "SS304", "origin": "Salem, India"}
                 })
         
         if cloudinary_products:
-            return cloudinary_products
+            # Sort to keep photos from same folder together
+            return sorted(cloudinary_products, key=lambda x: x['name'])
             
     except Exception as e:
         print(f"❌ API Error: {str(e)}")
