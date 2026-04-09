@@ -129,6 +129,8 @@ const CategoryPage = () => {
     "Juice stall": "Hygienic and stylish juice extraction stations made from food-grade SS304. Designed to handle high-volume fruit processing while maintaining a clean, professional aesthetic for customers."
   };
 
+  const [errorStatus, setErrorStatus] = useState<string | null>(null);
+
   const commonDescription = categoryDescriptions[categoryName || ""] || 
     `Discover our premium range of ${categoryName} manufacturing equipment. Precisely engineered for maximum durability, commercial hygiene, and everyday operational efficiency. All products adapt perfectly to intensive industrial usage, ensuring long-lasting performance and sleek integration into your professional environment.`;
 
@@ -136,18 +138,29 @@ const CategoryPage = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
+        setErrorStatus(null);
         const apiBaseUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+        console.log("Fetching from:", apiBaseUrl);
         const response = await fetch(`${apiBaseUrl}/api/products?category=${categoryName}`);
-        const data = await response.json();
-        setProducts(data);
+        
+        if (!response.ok) {
+           setErrorStatus(`Server Error: ${response.status}`);
+        } else {
+           const data = await response.json();
+           setProducts(data);
+           if (data.length === 0) setErrorStatus("Database match returned 0 items");
+        }
       } catch (error) {
         console.error("Failed to fetch products:", error);
+        setErrorStatus(`Connection Error: ${error instanceof Error ? error.message : String(error)}`);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
+    if (categoryName) {
+      fetchProducts();
+    }
     window.scrollTo(0, 0);
   }, [categoryName]);
 
