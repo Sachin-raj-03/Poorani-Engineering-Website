@@ -38,11 +38,11 @@ const footerLinks: FooterSection[] = [
 	{
 		label: 'Company',
 		links: [
-			{ title: 'Our Mission', href: '#mission' },
+			{ title: 'About Us', href: '#mission' },
 			{ title: 'Inquiry', href: '#inquiry' },
 			{ title: 'Browse Gallery', href: '#products' },
-			{ title: 'Privacy Policy', href: '#' },
-			{ title: 'Terms of Service', href: '#' },
+			{ title: 'Privacy Policy', href: '/privacy' },
+			{ title: 'Terms & Conditions', href: '/terms' },
 		],
 	},
 ];

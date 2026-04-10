@@ -7,7 +7,7 @@ import {
   Menu, X, Phone, Mail, MapPin, 
   ArrowRight, CheckCircle2, 
   Send, Factory, Package, Users, Building2, MessageSquare, Clock,
-  ChevronLeft, ChevronRight, ShoppingCart, Info, Activity, Flame
+  ChevronLeft, ChevronRight, ShoppingCart, Info, Activity, Flame, Shield
 } from 'lucide-react';
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { Footer } from "@/components/ui/footer-section";
@@ -44,9 +44,11 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: 'Products', href: '#products' },
-    { name: 'Mission', href: '#mission' },
-    { name: 'Inquiry', href: '#inquiry' },
+    { name: 'Products', href: '/#products', isExternal: false },
+    { name: 'About Us', href: '/about', isExternal: true },
+    { name: 'Privacy Policy', href: '/privacy', isExternal: true },
+    { name: 'Terms & Conditions', href: '/terms', isExternal: true },
+    { name: 'Inquiry', href: '/#inquiry', isExternal: false },
   ];
 
   return (
@@ -62,19 +64,24 @@ const Navbar = () => {
 
         <div className="hidden md:flex items-center gap-10">
           {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-white transition-colors"
-            >
-              {link.name}
-            </a>
+            link.isExternal ? (
+              <Link
+                key={link.name}
+                to={link.href}
+                className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-white transition-colors"
+              >
+                {link.name}
+              </Link>
+            ) : (
+              <a
+                key={link.name}
+                href={link.href}
+                className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-white transition-colors"
+              >
+                {link.name}
+              </a>
+            )
           ))}
-          <div className="flex items-center gap-4 ml-4">
-            <button className="text-xs font-bold text-white px-6 py-2.5 rounded-lg border border-zinc-700 hover:bg-white/5 transition-all">
-              Sign In
-            </button>
-          </div>
         </div>
 
         <button 
@@ -95,18 +102,26 @@ const Navbar = () => {
           >
             <div className="flex flex-col p-6 gap-6">
               {navLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  className="text-xs font-black uppercase tracking-widest text-zinc-400"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.name}
-                </a>
+                link.isExternal ? (
+                  <Link
+                    key={link.name}
+                    to={link.href}
+                    className="text-xs font-black uppercase tracking-widest text-zinc-400 focus:text-white"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {link.name}
+                  </Link>
+                ) : (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    className="text-xs font-black uppercase tracking-widest text-zinc-400 focus:text-white"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {link.name}
+                  </a>
+                )
               ))}
-              <button className="w-full bg-white text-black text-xs font-black py-4 rounded-xl">
-                Sign In
-              </button>
             </div>
           </motion.div>
         )}
@@ -616,6 +631,329 @@ const Categories = () => {
 
 
 
+const PrivacyPage = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-black pt-32 pb-20">
+      <div className="container mx-auto px-6 md:px-10 max-w-4xl">
+        <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-12">Privacy <span className="text-zinc-600">Policy</span></h1>
+        
+        <div className="prose prose-invert prose-zinc max-w-none space-y-12">
+          <section>
+            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">1. Introduction</h2>
+            <p className="text-zinc-400 leading-relaxed font-medium">Welcome to Poorani Engineering Works. We value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you visit our website.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">2. Information We Collect</h2>
+            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+              <li>Name, phone number, and email address</li>
+              <li>Business or company details (if provided)</li>
+              <li>Delivery address</li>
+              <li>Any information you submit through contact forms or inquiries</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">3. How We Use Your Information</h2>
+            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+              <li>Respond to your inquiries and provide customer support</li>
+              <li>Process orders and communicate order updates</li>
+              <li>Improve our products, services, and website</li>
+              <li>Send important updates related to your orders or our services</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">4. Cookies and Tracking</h2>
+            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+              <li>Our website may use cookies to enhance user experience.</li>
+              <li>Cookies help us understand website traffic and improve functionality.</li>
+              <li>You can choose to disable cookies through your browser settings.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">5. Data Sharing</h2>
+            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+              <li>We do not sell, trade, or rent your personal information.</li>
+              <li>Your data may be shared with trusted third parties only for business purposes such as delivery services or payment processing.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">6. Data Security</h2>
+            <p className="text-zinc-400 leading-relaxed font-medium">We take appropriate measures to protect your personal information from unauthorized access, misuse, or disclosure. However, no method of online transmission is 100% secure.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">8. Your Rights</h2>
+            <p className="text-zinc-400 leading-relaxed font-medium">You have the right to request access, correction, or deletion of your personal data. You may contact us at any time regarding your data.</p>
+          </section>
+
+          <section className="p-8 bg-zinc-900/30 rounded-3xl border border-zinc-800">
+            <h2 className="text-xl font-black text-white uppercase tracking-widest mb-6">11. Contact Us</h2>
+            <div className="space-y-4 text-zinc-400 font-bold">
+              <p className="flex items-center gap-3"><Mail className="w-5 h-5 text-blue-500" /> pooraniengg@gmail.com</p>
+              <p className="flex items-center gap-3"><Phone className="w-5 h-5 text-blue-500" /> +91 93845 43135</p>
+              <p className="flex items-center gap-3"><MapPin className="w-5 h-5 text-blue-500" /> 3/60 D, Ramanujar Temple Road, Erumapalayam, Salem - 636015</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const TermsPage = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-black pt-32 pb-20">
+      <div className="container mx-auto px-6 md:px-10 max-w-4xl">
+        <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-12">Terms & <span className="text-zinc-600">Conditions</span></h1>
+        
+        <div className="prose prose-invert prose-zinc max-w-none space-y-12">
+          <section>
+            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">1. Introduction</h2>
+            <p className="text-zinc-400 leading-relaxed font-medium">Welcome to Poorani Engineering Works. By accessing or using our website, you agree to be bound by these Terms and Conditions. If you do not agree, please do not use our website.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">2. About Us</h2>
+            <p className="text-zinc-400 leading-relaxed font-medium">We are a manufacturing company specializing in stainless steel and glass products for bakeries, hostels, and commercial kitchens. Our products include (but are not limited to) storage units, display counters, racks, and custom equipment.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">3. Use of Website</h2>
+            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+              <li>You agree to use this website only for lawful purposes.</li>
+              <li>You must not misuse this website or attempt unauthorized access.</li>
+              <li>All content on this website is for general information only and may change without notice.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">4. Product Information</h2>
+            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+              <li>We strive to ensure all product details, images, and specifications are accurate.</li>
+              <li>However, product images may show slight variations due to lighting, reflections (especially on stainless steel and glass surfaces), and display settings.</li>
+              <li>The actual product may differ slightly from the images shown.</li>
+              <li>Custom orders may also vary slightly from displayed designs.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">5. Orders and Payments</h2>
+            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+              <li>Orders are confirmed only after approval and payment (full or partial).</li>
+              <li>Prices are subject to change without prior notice.</li>
+              <li>For custom manufacturing, advance payment may be required.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">6. Delivery and Shipping</h2>
+            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+              <li>Delivery timelines are estimates and may vary depending on production and location.</li>
+              <li>We are not responsible for delays caused by external factors such as logistics or natural events.</li>
+              <li>Customers must inspect products upon delivery.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">7. Returns and Refunds</h2>
+            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+              <li>Since most products are custom-made, returns may not be accepted unless there is a manufacturing defect.</li>
+              <li>Any damage or defect must be reported within 2 days of delivery.</li>
+              <li>Refunds, if applicable, will be processed based on company policy.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">8. Warranty</h2>
+            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+              <li>Warranty (if provided) applies only to manufacturing defects.</li>
+              <li>It does not cover damage caused by misuse, improper installation, or normal wear and tear.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">9. Intellectual Property</h2>
+            <p className="text-zinc-400 leading-relaxed font-medium">All content, including images, logos, and designs, are the property of Poorani Engineering Works. Unauthorized use or reproduction is strictly prohibited.</p>
+          </section>
+
+          <section className="p-8 bg-zinc-900/30 rounded-3xl border border-zinc-800">
+            <h2 className="text-xl font-black text-white uppercase tracking-widest mb-6">10. Contact Us</h2>
+            <div className="space-y-4 text-zinc-400 font-bold">
+              <p className="flex items-center gap-3"><Mail className="w-5 h-5 text-blue-500" /> pooraniengg@gmail.com</p>
+              <p className="flex items-center gap-3"><Phone className="w-5 h-5 text-blue-500" /> +91 93845 43135</p>
+              <p className="flex items-center gap-3"><MapPin className="w-5 h-5 text-blue-500" /> 3/60 D, Ramanujar Temple Road, Erumapalayam, Salem - 636015</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const AboutPage = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-black pt-32 pb-20">
+      <div className="container mx-auto px-6 md:px-10 max-w-4xl">
+        <h1 className="text-5xl md:text-8xl font-black text-white uppercase tracking-tighter leading-none mb-12 italic font-times">
+          About <br /> <span className="text-zinc-600">Us</span>
+        </h1>
+        <div className="w-32 h-2 bg-blue-600 rounded-full mb-16" />
+
+        <div className="space-y-20">
+          <section>
+            <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-6 border-l-4 border-blue-600 pl-6">Who We Are</h2>
+            <p className="text-zinc-400 text-xl leading-relaxed font-medium">
+              Welcome to Poorani Engineering Works, a trusted manufacturer of high-quality stainless steel and glass products. We specialize in designing and producing durable, hygienic, and modern equipment for bakeries, hostels, and commercial kitchens.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-6 border-l-4 border-blue-600 pl-6">What We Do</h2>
+            <p className="text-zinc-400 text-lg mb-8 font-medium">At Poorani Engineering Works, we manufacture a wide range of products including:</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               {[
+                 "Bakery display counters",
+                 "Stainless steel racks and storage units",
+                 "Kitchen equipment and workstations",
+                 "Hostel and industrial utility items",
+                 "Custom-designed stainless steel and glass products"
+               ].map((item, i) => (
+                 <div key={i} className="flex items-center gap-4 p-4 bg-zinc-900/30 border border-zinc-800 rounded-2xl">
+                    <CheckCircle2 size={18} className="text-blue-500 shrink-0" />
+                    <span className="text-zinc-300 font-bold uppercase text-xs tracking-widest">{item}</span>
+                 </div>
+               ))}
+            </div>
+          </section>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <section className="p-10 bg-zinc-900/40 border border-zinc-800 rounded-[2.5rem]">
+              <h2 className="text-xl font-black text-white uppercase tracking-widest mb-6 flex items-center gap-3">
+                <Flame className="w-6 h-6 text-blue-500" /> Our Mission
+              </h2>
+              <p className="text-zinc-400 leading-relaxed font-medium">
+                Our mission is to deliver reliable, innovative, and cost-effective solutions that meet the needs of our customers while maintaining superior quality and craftsmanship.
+              </p>
+            </section>
+
+            <section className="p-10 bg-zinc-900/40 border border-zinc-800 rounded-[2.5rem]">
+              <h2 className="text-xl font-black text-white uppercase tracking-widest mb-6 flex items-center gap-3">
+                <Activity className="w-6 h-6 text-blue-500" /> Our Vision
+              </h2>
+              <p className="text-zinc-400 leading-relaxed font-medium">
+                To become a leading manufacturer in the stainless steel and glass industry by continuously improving our designs, technology, and customer satisfaction.
+              </p>
+            </section>
+          </div>
+
+          <section>
+            <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-8 border-l-4 border-blue-600 pl-6">Why Choose Us</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+               {[
+                 { title: "High-quality materials", desc: "Stainless steel & glass" },
+                 { title: "Strong construction", desc: "Durable and long-lasting" },
+                 { title: "Custom design", desc: "Tailored to your needs" },
+                 { title: "Timely delivery", desc: "Manufacturing speed" },
+                 { title: "Customer focused", desc: "Your satisfaction first" }
+               ].map((item, i) => (
+                 <div key={i} className="p-6 bg-zinc-900/20 border border-zinc-800/50 rounded-2xl hover:bg-zinc-900/40 transition-colors group text-center">
+                    <h3 className="text-white font-black uppercase text-xs tracking-widest mb-2 group-hover:text-blue-500 transition-colors">{item.title}</h3>
+                    <p className="text-zinc-600 text-[10px] font-black uppercase tracking-tighter">{item.desc}</p>
+                 </div>
+               ))}
+            </div>
+          </section>
+
+          <section className="p-12 bg-white text-black rounded-[3rem] text-center">
+            <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">Our Commitment</h2>
+            <p className="text-sm md:text-base font-bold uppercase tracking-widest max-w-2xl mx-auto leading-relaxed">
+              We are committed to providing products that combine strength, safety, and modern design. Whether it’s a small kitchen setup or large-scale industrial requirement, we ensure every product meets your expectations.
+            </p>
+          </section>
+
+          <section className="p-12 bg-zinc-900/30 rounded-[3rem] border border-zinc-800">
+            <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-10">Contact Us</h2>
+            <p className="text-zinc-500 font-bold mb-8 uppercase text-xs tracking-widest italic">We would love to work with you and support your business needs.</p>
+            <div className="space-y-6 text-zinc-300 font-bold">
+              <p className="flex items-center gap-4"><Mail className="w-6 h-6 text-blue-500" /> pooraniengg@gmail.com</p>
+              <p className="flex items-center gap-4"><Phone className="w-6 h-6 text-blue-500" /> +91 93845 43135</p>
+              <p className="flex items-center gap-4"><MapPin className="w-6 h-6 text-blue-500" /> 3/60 D, Ramanujar Temple Road, Erumapalayam, Salem - 636015</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const AboutUs = () => {
+  return (
+    <section id="mission" className="py-24 md:py-32 bg-black relative overflow-hidden">
+      <div className="container mx-auto px-6 md:px-10 relative z-10">
+        <div className="flex flex-col md:flex-row gap-16 items-center">
+          <div className="w-full md:w-1/2">
+             <h4 className="text-[10px] font-black uppercase tracking-[0.5em] text-blue-500 mb-6">Since 2004</h4>
+             <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-none mb-10">
+               Engineering Excellence in <span className="text-zinc-500">Stainless Steel</span>
+             </h2>
+             <div className="space-y-6 text-zinc-400 text-lg leading-relaxed font-medium">
+               <p>
+                 Poorani Engineering Works is a leading manufacturer of comprehensive stainless steel products, specializing in high-performance equipment for Bakeries, Hotels, Educational Institutions, and Commercial Kitchens.
+               </p>
+               <p>
+                 Our commitment to using premium SS 304 grade materials ensures that every product we build meets the highest standards of durability and hygiene.
+               </p>
+             </div>
+          </div>
+          <div className="w-full md:w-1/2 grid grid-cols-2 gap-4">
+             <div className="p-8 bg-zinc-900/50 border border-zinc-800 rounded-3xl">
+                <Shield className="w-8 h-8 text-blue-500 mb-4" />
+                <h3 className="text-white font-black uppercase text-xs tracking-widest mb-2">Quality</h3>
+                <p className="text-zinc-500 text-sm">Certified SS 304 Grade material for life-long durability.</p>
+             </div>
+             <div className="p-8 bg-zinc-900/50 border border-zinc-800 rounded-3xl">
+                <Factory className="w-8 h-8 text-blue-500 mb-4" />
+                <h3 className="text-white font-black uppercase text-xs tracking-widest mb-2">Precision</h3>
+                <p className="text-zinc-500 text-sm">Advanced manufacturing for perfect dimensional accuracy.</p>
+             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const Inquiry = () => {
+  return (
+    <section id="inquiry" className="py-24 bg-zinc-950">
+      <div className="container mx-auto px-6 md:px-10 text-center">
+        <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-6">Ready to Work with Us?</h2>
+        <p className="text-zinc-500 text-xl mb-12 max-w-2xl mx-auto italic font-medium">Get a custom quote for your industrial kitchen or commercial project today.</p>
+        <div className="flex flex-wrap justify-center gap-6">
+          <a href="tel:+919384543135" className="bg-white text-black px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all">Call Now</a>
+          <a href="mailto:pooraniengg@gmail.com" className="bg-zinc-900 text-white border border-zinc-800 px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-white hover:text-black transition-all">Send Email</a>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const WhatsAppButton = () => (
   <a
     href="https://wa.me/919384543135"
@@ -646,8 +984,12 @@ export default function App() {
           <>
             <Hero />
             <Categories />
+            <Inquiry />
           </>
         } />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/explore/:categoryName" element={<CategoryPage />} />
       </Routes>
       <Footer />
