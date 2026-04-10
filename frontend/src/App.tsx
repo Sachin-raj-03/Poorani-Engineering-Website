@@ -695,7 +695,7 @@ const PrivacyPage = () => {
           </section>
 
           <section className="p-8 bg-zinc-900/30 rounded-3xl border border-zinc-800">
-            <h2 className="text-xl font-black text-white uppercase tracking-widest mb-6">11. Contact Us</h2>
+            <h2 className="text-xl font-black text-white uppercase tracking-widest mb-6">9. Contact Us</h2>
             <div className="space-y-4 text-zinc-400 font-bold">
               <p className="flex items-center gap-3"><Mail className="w-5 h-5 text-blue-500" /> pooraniengg@gmail.com</p>
               <div className="flex flex-col gap-2">
