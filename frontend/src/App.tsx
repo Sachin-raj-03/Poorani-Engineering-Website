@@ -698,7 +698,10 @@ const PrivacyPage = () => {
             <h2 className="text-xl font-black text-white uppercase tracking-widest mb-6">11. Contact Us</h2>
             <div className="space-y-4 text-zinc-400 font-bold">
               <p className="flex items-center gap-3"><Mail className="w-5 h-5 text-blue-500" /> pooraniengg@gmail.com</p>
-              <p className="flex items-center gap-3"><Phone className="w-5 h-5 text-blue-500" /> +91 93845 43135</p>
+              <div className="flex flex-col gap-2">
+                <p className="flex items-center gap-3"><Phone className="w-5 h-5 text-blue-500" /> +91 93845 43135</p>
+                <p className="flex items-center gap-3 ml-8">+91 77088 44441</p>
+              </div>
               <p className="flex items-center gap-3"><MapPin className="w-5 h-5 text-blue-500" /> 3/60 D, Ramanujar Temple Road, Erumapalayam, Salem - 636015</p>
             </div>
           </section>
@@ -792,7 +795,10 @@ const TermsPage = () => {
             <h2 className="text-xl font-black text-white uppercase tracking-widest mb-6">10. Contact Us</h2>
             <div className="space-y-4 text-zinc-400 font-bold">
               <p className="flex items-center gap-3"><Mail className="w-5 h-5 text-blue-500" /> pooraniengg@gmail.com</p>
-              <p className="flex items-center gap-3"><Phone className="w-5 h-5 text-blue-500" /> +91 93845 43135</p>
+              <div className="flex flex-col gap-2">
+                <p className="flex items-center gap-3"><Phone className="w-5 h-5 text-blue-500" /> +91 93845 43135</p>
+                <p className="flex items-center gap-3 ml-8">+91 77088 44441</p>
+              </div>
               <p className="flex items-center gap-3"><MapPin className="w-5 h-5 text-blue-500" /> 3/60 D, Ramanujar Temple Road, Erumapalayam, Salem - 636015</p>
             </div>
           </section>
@@ -892,7 +898,10 @@ const AboutPage = () => {
             <p className="text-zinc-500 font-bold mb-8 uppercase text-xs tracking-widest italic">We would love to work with you and support your business needs.</p>
             <div className="space-y-6 text-zinc-300 font-bold">
               <p className="flex items-center gap-4"><Mail className="w-6 h-6 text-blue-500" /> pooraniengg@gmail.com</p>
-              <p className="flex items-center gap-4"><Phone className="w-6 h-6 text-blue-500" /> +91 93845 43135</p>
+              <div className="flex flex-col gap-3">
+                <p className="flex items-center gap-4"><Phone className="w-6 h-6 text-blue-500" /> +91 93845 43135</p>
+                <p className="flex items-center gap-4 ml-10">+91 77088 44441</p>
+              </div>
               <p className="flex items-center gap-4"><MapPin className="w-6 h-6 text-blue-500" /> 3/60 D, Ramanujar Temple Road, Erumapalayam, Salem - 636015</p>
             </div>
           </section>
