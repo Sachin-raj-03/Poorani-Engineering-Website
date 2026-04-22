@@ -25,9 +25,9 @@ if all([CLOUD_NAME, API_KEY, API_SECRET]):
         api_secret=API_SECRET,
         secure=True
     )
-    print(f"✅ Cloudinary connected successfully for: {CLOUD_NAME}")
+    print(f"Cloudinary connected successfully for: {CLOUD_NAME}")
 else:
-    print("⚠️ WARNING: Cloudinary credentials missing! API will return mock data.")
+    print("WARNING: Cloudinary credentials missing! API will return mock data.")
 
 app = FastAPI(title="Poorani Engineering API")
 

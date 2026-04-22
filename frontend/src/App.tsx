@@ -4,7 +4,7 @@ import { Routes, Route, useNavigate, useParams, Link } from 'react-router-dom';
 
 const VERSION = "1.0.5-DEBUG";
 import { 
-  Menu, X, Phone, Mail, MapPin, 
+  Menu, X, Phone, Mail, MapPin, Search,
   ArrowRight, CheckCircle2, 
   Send, Factory, Package, Users, Building2, MessageSquare, Clock,
   ChevronLeft, ChevronRight, ShoppingCart, Info, Activity, Flame, Shield
@@ -136,14 +136,32 @@ const CategoryPage = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredProducts = products.filter(p => 
+    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
   // Common descriptions for categories
   const categoryDescriptions: Record<string, string> = {
-    "Display counter": "Our premium display counters are designed to showcase your bakery and confectionery products with maximum visibility. Featuring high-clarity tempered glass and integrated LED lighting, these counters maintain optimal temperature while presenting your items elegantly.",
-    "Dining table": "Built for high-traffic environments, our stainless steel dining tables combine extreme durability with easy-to-clean hygienic surfaces. Perfect for industrial canteens, school mess halls, and commercial food courts.",
-    "Snacks counter": "Versatile and efficient snacks counters designed for quick-service environments. These units integrate storage, heating, and serving areas into a single ergonomic workstation for peak operational performance.",
-    "Tea stall": "Professional-grade mobile and stationary tea stalls engineered for high-volume service. These units feature reinforced burner spaces and ample storage for all brewing essentials.",
-    "Juice stall": "Hygienic and stylish juice extraction stations made from food-grade SS304. Designed to handle high-volume fruit processing while maintaining a clean, professional aesthetic for customers."
+    "Display counter": "Premium display counter crafted from 304-grade stainless steel with toughened glass, ensuring durability and hygiene. Its elegant multi-shelf design enhances product visibility, making it perfect for bakeries, sweet shops, and retail spaces while offering long-lasting performance and easy maintenance.",
+    "Dining table": "Premium tables crafted from high-quality stainless steel, ensuring durability, stability, and hygiene. Designed for dining, commercial, and flexible use, they offer strong build quality, space efficiency, and easy maintenance, making them ideal for restaurants, kitchens, and institutional environments.",
+    "Standing table": "Premium tables crafted from high-quality stainless steel, ensuring durability, stability, and hygiene. Designed for dining, commercial, and flexible use, they offer strong build quality, space efficiency, and easy maintenance, making them ideal for restaurants, kitchens, and institutional environments.",
+    "Folding table": "Premium tables crafted from high-quality stainless steel, ensuring durability, stability, and hygiene. Designed for dining, commercial, and flexible use, they offer strong build quality, space efficiency, and easy maintenance, making them ideal for restaurants, kitchens, and institutional environments.",
+    "Chair": "Premium seating solutions crafted for strength, comfort, and durability. Made from high-quality materials, they are ideal for schools, dining areas, and commercial spaces, offering sturdy construction, long-lasting performance, easy maintenance, and a clean, functional design.",
+    "Stool": "Premium seating solutions crafted for strength, comfort, and durability. Made from high-quality materials, they are ideal for schools, dining areas, and commercial spaces, offering sturdy construction, long-lasting performance, easy maintenance, and a clean, functional design.",
+    "school desk &bench": "Premium seating solutions crafted for strength, comfort, and durability. Made from high-quality materials, they are ideal for schools, dining areas, and commercial spaces, offering sturdy construction, long-lasting performance, easy maintenance, and a clean, functional design.",
+    "Working table": "Premium working table crafted from 304-grade stainless steel, ensuring durability and hygiene. Designed for efficient workflow in commercial kitchens and industries, it offers a strong, stable surface, corrosion resistance, easy cleaning, and long-lasting performance under heavy-duty use.",
+    "Hand wash Sink": "Premium hand wash sink crafted from high-quality stainless steel, ensuring hygiene and durability. Designed for commercial and industrial use, it offers efficient water flow, corrosion resistance, easy maintenance, and a clean, professional design suitable for kitchens and workplaces.",
+    "Racks": "Premium racks and trolley systems crafted from durable stainless steel, ensuring strength and reliability. Designed for storage and easy movement, they are ideal for commercial kitchens and industries, offering efficient organization, smooth mobility, corrosion resistance, and long-lasting performance.",
+    "Trolly": "Premium racks and trolley systems crafted from durable stainless steel, ensuring strength and reliability. Designed for storage and easy movement, they are ideal for commercial kitchens and industries, offering efficient organization, smooth mobility, corrosion resistance, and long-lasting performance.",
+    "Watercan stand": "Premium water can stand crafted from high-quality stainless steel, ensuring durability and stability. Designed to hold water cans securely, it offers convenience, hygiene, corrosion resistance, and easy maintenance, making it ideal for homes, offices, and commercial spaces.",
+    "SS Door": "Premium stainless steel door designed for strength, security, and durability. Crafted from high-quality materials, it offers corrosion resistance, long-lasting performance, and a modern appearance, making it ideal for commercial, industrial, and residential applications with minimal maintenance.",
+    "Baby cradle": "Premium baby cradle crafted with strong and safe materials, ensuring comfort and security. Designed for durability and stability, it provides a gentle resting space, easy maintenance, and long-lasting performance, making it ideal for both home and institutional use.",
+    "Lamp cage": "Premium lamp cage crafted from durable stainless steel, ensuring protection and longevity. Designed to safeguard lighting fixtures, it offers corrosion resistance, strong build quality, and a functional design, making it ideal for industrial, commercial, and outdoor applications.",
+    "Design pcs": "Premium stainless steel design pieces crafted with precision and creativity. Designed to enhance aesthetics, they offer durability, corrosion resistance, and a modern finish, making them ideal for decorative and functional applications in commercial, residential, and industrial spaces.",
+    "Appam Patra(Paniyaram Adupu)": "Premium appam patra crafted for efficient and uniform cooking. Made from high-quality materials, it ensures durability and heat distribution, making it ideal for commercial kitchens while offering consistent results, easy maintenance, and long-lasting performance."
   };
 
   const [errorStatus, setErrorStatus] = useState<string | null>(null);
@@ -204,21 +222,40 @@ const CategoryPage = () => {
           <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Home
         </button>
 
-        <div className="mb-20">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter mb-4 leading-none italic font-times">{categoryName}</h1>
-            <div className="w-32 h-2 bg-blue-600 rounded-full mb-10" />
+            <div className="w-32 h-2 bg-blue-600 rounded-full" />
           </motion.div>
+
+          <div className="relative w-full md:w-80 group">
+            <div className="absolute inset-0 bg-blue-600/10 blur-lg group-focus-within:bg-blue-600/30 transition-all duration-500 rounded-full" />
+            <div className="relative flex items-center bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 focus-within:border-blue-600/50 transition-all backdrop-blur-sm">
+              <Search className="w-4 h-4 text-zinc-500 mr-3 group-focus-within:text-blue-500 transition-colors" />
+              <input 
+                type="text" 
+                placeholder="Search gallery..." 
+                className="bg-transparent border-none outline-none text-white w-full font-bold uppercase text-[9px] tracking-widest placeholder:text-zinc-600"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
         </div>
 
         <div className="flex items-center justify-between mb-10 border-b border-zinc-900 pb-10">
            <div>
               <h2 className="text-2xl font-black uppercase tracking-tight mb-2">Product Gallery</h2>
-              <p className="text-zinc-600 text-xs font-bold uppercase tracking-widest italic">{products.length} Items Available</p>
+              <p className="text-zinc-600 text-xs font-bold uppercase tracking-widest italic">
+                {searchQuery 
+                  ? `${filteredProducts.length} Results for "${searchQuery}"`
+                  : `${products.length} Items Available`
+                }
+              </p>
            </div>
            <div className="flex gap-4">
               <div className="w-10 h-10 rounded-full border border-zinc-800 flex items-center justify-center text-zinc-600"><Activity size={16}/></div>
@@ -320,10 +357,10 @@ const CategoryPage = () => {
           <div className="flex items-center justify-center h-64 mb-20">
             <div className="w-12 h-12 border-4 border-zinc-800 border-t-blue-600 rounded-full animate-spin" />
           </div>
-        ) : products.length > 0 ? (
+        ) : filteredProducts.length > 0 ? (
           <Stories className="mb-20">
             <StoriesContent>
-              {products.map((product, idx) => (
+              {filteredProducts.map((product, idx) => (
                 <Story 
                   key={product.id || idx} 
                   className="aspect-[4/5]" 
@@ -350,10 +387,22 @@ const CategoryPage = () => {
         ) : (
           <div className="text-center py-32 bg-zinc-900/30 rounded-[3rem] border border-zinc-800 border-dashed mb-20">
             <Package className="w-16 h-16 text-zinc-800 mx-auto mb-6 opacity-50" />
-            <p className="text-zinc-600 uppercase text-xs font-black tracking-widest">Gallery empty for this category</p>
-            <button className="mt-8 bg-zinc-800 text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-zinc-700 transition-all">
-              Request Catalog
-            </button>
+            <p className="text-zinc-600 uppercase text-xs font-black tracking-widest italic">
+              {products.length === 0 ? "Gallery empty for this category" : `No results for "${searchQuery}"`}
+            </p>
+            {products.length > 0 && (
+              <button 
+                onClick={() => setSearchQuery("")}
+                className="mt-8 bg-zinc-800 text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-zinc-700 transition-all"
+              >
+                Clear Search
+              </button>
+            )}
+            {products.length === 0 && (
+              <button className="mt-8 bg-zinc-800 text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-zinc-700 transition-all">
+                Request Catalog
+              </button>
+            )}
           </div>
         )}
 
@@ -363,9 +412,7 @@ const CategoryPage = () => {
            viewport={{ once: true }}
            className="bg-zinc-900/40 border border-zinc-800/50 p-8 md:p-12 rounded-[2rem] backdrop-blur-sm relative overflow-hidden group max-w-4xl"
         >
-          <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-            <Info className="w-24 h-24 text-blue-500" />
-          </div>
+
           <h3 className="text-[10px] font-black uppercase tracking-widest text-blue-500 mb-4">Category Overview</h3>
           <p className="text-zinc-400 text-lg md:text-xl font-medium leading-relaxed relative z-10">
             {commonDescription}
@@ -513,7 +560,8 @@ const CategoryCard = ({ title, img, items, icon: Icon, onExplore }: CategoryCard
     />
     <motion.div 
       whileHover={{ y: -5 }}
-      className="relative flex h-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 transition-all group-hover:bg-zinc-900"
+      onClick={onExplore}
+      className="relative flex h-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 transition-all group-hover:bg-zinc-900 cursor-pointer"
     >
       {img && (
         <div className="h-40 sm:h-52 md:h-72 lg:h-80 relative overflow-hidden rounded-t-xl transition-all duration-700 w-full shrink-0 border-b border-zinc-800">
@@ -535,11 +583,10 @@ const CategoryCard = ({ title, img, items, icon: Icon, onExplore }: CategoryCard
             ))}
           </ul>
         )}
-        <button 
-          onClick={onExplore}
-          className="w-full py-3 md:py-4 rounded-xl border border-zinc-800 text-zinc-400 font-black text-[9px] md:text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all cursor-pointer relative z-10">
+        <div 
+          className="w-full py-3 md:py-4 rounded-xl border border-zinc-800 text-zinc-400 font-black text-[9px] md:text-xs uppercase tracking-widest group-hover:bg-white group-hover:text-black transition-all text-center">
           Explore Category
-        </button>
+        </div>
       </div>
     </motion.div>
   </div>
@@ -586,7 +633,12 @@ const Categories = () => {
   ];
 
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+
+  const filteredCategories = categoriesList.filter(cat => 
+    cat.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Stop body scroll when modal is open
   useEffect(() => {
@@ -600,22 +652,79 @@ const Categories = () => {
   return (
     <section id="products" className="py-16 md:py-32 bg-zinc-950 relative">
       <div className="container mx-auto px-4 sm:px-6 md:px-10">
-        <div className="text-left max-w-3xl mb-10 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 md:mb-6 uppercase tracking-tight">Our Products</h2>
-          <p className="text-zinc-500 text-base md:text-xl font-medium">We specialize in manufacturing highly durable and hygienic equipment.</p>
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-20 gap-8">
+          <div className="text-left max-w-5xl">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 md:mb-6 uppercase tracking-tight">Our Products</h2>
+            <div className="space-y-4 text-zinc-500 text-sm md:text-base font-medium leading-relaxed">
+              <p>
+                We offer a wide range of premium stainless steel products designed for durability, hygiene, and performance. Our products include bakery equipment, food counters, commercial kitchen solutions, dining and working tables, seating systems, storage racks, trolleys, and customized fabrication items.
+              </p>
+              <p>
+                From tea stalls, juice counters, and fast food setups to burners, ovens, sinks, and bainmarie units, every product is crafted using high-quality materials to ensure long-lasting reliability and easy maintenance. We also manufacture utility products such as water can stands, stainless steel doors, lamp cages, and specialized items like baby cradles and appam patra.
+              </p>
+              <p>
+                Our products are ideal for bakeries, hotels, restaurants, street vendors, institutions, and industrial applications—delivering both functionality and a clean, professional finish.
+              </p>
+            </div>
+          </div>
+          
+          <div className="relative w-full md:w-96 group">
+            <div className="absolute inset-0 bg-blue-600/20 blur-xl group-focus-within:bg-blue-600/40 transition-all duration-500 rounded-full" />
+            <div className="relative flex items-center bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-4 focus-within:border-blue-600/50 transition-all">
+              <Search className="w-5 h-5 text-zinc-500 mr-4 group-focus-within:text-blue-500 transition-colors" />
+              <input 
+                type="text" 
+                placeholder="Search for products..." 
+                className="bg-transparent border-none outline-none text-white w-full font-bold uppercase text-[10px] tracking-widest placeholder:text-zinc-600"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery("")}
+                  className="text-zinc-600 hover:text-white transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
-          {categoriesList.map((cat, i) => (
-            <CategoryCard 
-              key={i}
-              title={cat.title} 
-              icon={cat.icon}
-              img={cat.img}
-              onExplore={() => navigate(`/explore/${encodeURIComponent(cat.title)}`)}
-            />
-          ))}
+        <div className="mb-10">
+          {searchQuery && (
+            <p className="text-zinc-500 text-xs font-black uppercase tracking-widest italic">
+              {filteredCategories.length > 0 
+                ? `Found ${filteredCategories.length} products matching "${searchQuery}"`
+                : `No products matching "${searchQuery}"`}
+            </p>
+          )}
         </div>
+
+        {filteredCategories.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+            {filteredCategories.map((cat, i) => (
+              <CategoryCard 
+                key={i}
+                title={cat.title} 
+                icon={cat.icon}
+                img={cat.img}
+                onExplore={() => navigate(`/explore/${encodeURIComponent(cat.title)}`)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-24 bg-zinc-900/20 rounded-[3rem] border border-zinc-800 border-dashed">
+            <Package className="w-16 h-16 text-zinc-800 mx-auto mb-6 opacity-50" />
+            <p className="text-zinc-600 uppercase text-xs font-black tracking-widest italic">We couldn't find any products matching your search</p>
+            <button 
+              onClick={() => setSearchQuery("")}
+              className="mt-8 text-blue-500 uppercase text-[10px] font-black tracking-widest hover:text-blue-400 transition-colors"
+            >
+              Clear Search
+            </button>
+          </div>
+        )}
       </div>
 
       {selectedCategory && (
