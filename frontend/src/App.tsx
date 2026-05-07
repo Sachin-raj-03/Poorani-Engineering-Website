@@ -644,14 +644,6 @@ const CategoryPage = () => {
                   <StoryTitle className="truncate font-black text-[10px] uppercase tracking-[0.3em] text-white/90">
                     {categoryName} • PHOTO {idx + 1}
                   </StoryTitle>
-                  <StoryAuthor>
-                    <StoryAuthorImage
-                      fallback="PEW"
-                      name="Poorani Engineering"
-                      className="size-8"
-                    />
-                    <StoryAuthorName className="text-[9px] font-black uppercase tracking-[0.2em] text-white/60">View Details</StoryAuthorName>
-                  </StoryAuthor>
                 </Story>
               ))}
             </StoriesContent>
