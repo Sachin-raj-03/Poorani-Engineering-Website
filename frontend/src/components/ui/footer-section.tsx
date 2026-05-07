@@ -49,13 +49,18 @@ const footerLinks: FooterSection[] = [
 
 export function Footer() {
 	return (
-		<footer className="relative w-full border-t border-zinc-900 bg-black px-6 py-12 lg:py-24">
+		<footer className="relative w-full border-t border-border bg-secondary px-6 py-12 lg:py-24">
 			<div className="container mx-auto max-w-7xl">
 				<div className="grid w-full gap-12 lg:grid-cols-4 xl:gap-16">
                     {/* Brand Section */}
 					<AnimatedContainer className="space-y-6 lg:col-span-1">
-						<div className="flex items-center gap-2">
-                            <span className="text-2xl font-times font-bold tracking-tight text-white italic">
+						<div className="flex items-center gap-3">
+							<img 
+								src="/Logo_bg/logo-removebg-preview.png" 
+								alt="Logo" 
+								className="w-10 h-10 object-contain"
+							/>
+                            <span className="text-2xl font-times font-bold tracking-tight text-foreground italic">
                                 Poorani Engineering
                             </span>
                         </div>
@@ -64,32 +69,32 @@ export function Footer() {
 						</p>
                         
                         <div className="space-y-4 pt-4">
-                            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 mb-6">Contact Details</h4>
-                            <div className="flex items-start gap-4 text-zinc-400 group">
+                            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-6">Contact Details</h4>
+                            <div className="flex items-start gap-4 text-muted-foreground group">
                                 <Phone size={16} className="text-blue-500 mt-1 shrink-0" />
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] uppercase font-black tracking-widest text-zinc-600 mb-1">Call Us</span>
-                                    <a href="tel:+919384543135" className="text-sm font-bold hover:text-white transition-colors">+91 93845 43135</a>
-                                    <a href="tel:+917708844441" className="text-sm font-bold hover:text-white transition-colors">+91 77088 44441</a>
+                                    <span className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 mb-1">Call Us</span>
+                                    <a href="tel:+919384543135" className="text-sm font-bold text-foreground hover:text-primary transition-colors">+91 93845 43135</a>
+                                    <a href="tel:+917708844441" className="text-sm font-bold text-foreground hover:text-primary transition-colors">+91 77088 44441</a>
                                 </div>
                             </div>
-                            <div className="flex items-start gap-4 text-zinc-400 group">
+                            <div className="flex items-start gap-4 text-muted-foreground group">
                                 <Mail size={16} className="text-blue-500 mt-1 shrink-0" />
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] uppercase font-black tracking-widest text-zinc-600 mb-1">Email Us</span>
-                                    <a href="mailto:pooraniengineering@gmail.com" className="text-sm font-bold hover:text-white transition-colors">pooraniengg@gmail.com</a>
+                                    <span className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 mb-1">Email Us</span>
+                                    <a href="mailto:pooraniengineering@gmail.com" className="text-sm font-bold text-foreground hover:text-primary transition-colors">pooraniengg@gmail.com</a>
                                 </div>
                             </div>
-                            <div className="flex items-start gap-4 text-zinc-400">
+                            <div className="flex items-start gap-4 text-muted-foreground">
                                 <MapPin size={16} className="text-blue-500 mt-1 shrink-0" />
                                 <div className="flex flex-col flex-1">
-                                     <span className="text-[10px] uppercase font-black tracking-widest text-zinc-600 mb-1">Visit Factory</span>
-                                     <p className="text-sm font-bold leading-snug mb-4">
+                                     <span className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 mb-1">Visit Factory</span>
+                                     <p className="text-sm font-bold leading-snug mb-4 text-foreground">
                                          3/60 D, Ramanujar Temple Road,<br/>
                                          Kalapparai Thottam, Erumapalayam,<br/>
                                          Salem - 636015, Tamil Nadu
                                      </p>
-                                     <div className="relative w-full h-32 rounded-xl overflow-hidden border border-zinc-800 group/fmap">
+                                     <div className="relative w-full h-32 rounded-xl overflow-hidden border border-border group/fmap">
                                          <a 
                                              href="https://maps.app.goo.gl/wmPiQdxLTjX22Maj7"
                                              target="_blank"
@@ -110,11 +115,11 @@ export function Footer() {
                                      </div>
                                 </div>
                             </div>
-                            <div className="flex items-start gap-4 text-zinc-400">
+                            <div className="flex items-start gap-4 text-muted-foreground">
                                 <Clock size={16} className="text-blue-500 mt-1 shrink-0" />
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] uppercase font-black tracking-widest text-zinc-600 mb-1">Business Hours</span>
-                                    <p className="text-sm font-bold leading-tight">Mon - Sat: 09:00 AM - 07:30 PM</p>
+                                    <span className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 mb-1">Business Hours</span>
+                                    <p className="text-sm font-bold leading-tight text-foreground">Mon - Sat: 09:00 AM - 07:30 PM</p>
                                     <p className="text-[11px] font-bold text-red-400 uppercase tracking-widest mt-1">Sunday: Holiday</p>
                                 </div>
                             </div>
@@ -124,7 +129,7 @@ export function Footer() {
                     {/* Products Grid */}
                     <div className="lg:col-span-2">
                         <AnimatedContainer delay={0.2}>
-                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white mb-8 border-l-2 border-blue-600 pl-4">Full Product List</h3>
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground mb-8 border-l-2 border-primary pl-4">Full Product List</h3>
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3">
                                 {allCategories.map((cat) => (
                                     <a
@@ -142,13 +147,13 @@ export function Footer() {
                     {/* Company Links */}
                     <div className="lg:col-span-1">
                         <AnimatedContainer delay={0.3}>
-                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white mb-8 border-l-2 border-zinc-800 pl-4">Company</h3>
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground mb-8 border-l-2 border-zinc-800 pl-4">Company</h3>
                             <ul className="space-y-4">
                                 {footerLinks[1].links.map((link) => (
                                     <li key={link.title}>
                                         <a
                                             href={link.href}
-                                            className="text-muted-foreground hover:text-white text-xs font-black uppercase tracking-widest transition-all duration-300 inline-block"
+                                            className="text-muted-foreground hover:text-foreground text-xs font-black uppercase tracking-widest transition-all duration-300 inline-block"
                                         >
                                             {link.title}
                                         </a>
@@ -159,13 +164,10 @@ export function Footer() {
                     </div>
 				</div>
 
-                <div className="mt-20 pt-8 border-t border-zinc-900/50 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">
+                <div className="mt-20 pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p className="text-foreground/40 text-[10px] font-black uppercase tracking-widest">
                         © {new Date().getFullYear()} Poorani Engineering Works. All rights reserved.
                     </p>
-                    <div className="flex gap-8">
-                        <span className="text-white/20 text-[9px] font-black uppercase tracking-[0.3em]">Pure SS 304 Grade Quality</span>
-                    </div>
                 </div>
 			</div>
 		</footer>

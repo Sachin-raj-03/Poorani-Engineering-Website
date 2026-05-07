@@ -6,26 +6,45 @@
   --font-teko: 'Teko', sans-serif;
   --font-brand: 'Syncopate', sans-serif;
   --font-times: 'Tinos', 'Times New Roman', Times, serif;
-  --color-background: #000000;
-  --color-foreground: #ffffff;
+  
+  /* Dynamic colors using CSS variables */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
   --color-primary: #2563eb;
   --color-primary-foreground: #ffffff;
-  --color-secondary: #0a0a0a;
-  --color-secondary-foreground: #ffffff;
-  --color-muted: #171717;
-  --color-muted-foreground: #737373;
-  --color-accent: #262626;
-  --color-accent-foreground: #ffffff;
-  --color-border: #262626;
-  --color-input: #262626;
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--foreground);
+  --color-border: var(--border);
+  --color-input: var(--border);
 }
 
 :root {
-  --black: #000000;
+  /* Premium Light Theme (Obsidian & Steel) */
+  --background: #ffffff;
+  --foreground: #020617; /* Deep Obsidian */
+  --secondary: #f8fafc;
+  --muted: #f1f5f9;
+  --muted-foreground: #334155; /* Slate 700 for better readability */
+  --accent: #eff6ff;
+  --border: #e2e8f0;
+  
+  /* Metallic Gradient */
+  --metallic-gradient: linear-gradient(145deg, #f8fafc, #e2e8f0);
 }
 
 body {
   margin: 0;
   display: block;
-  background: black;
+  background: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom Utilities */
+.bg-metallic {
+  background: var(--metallic-gradient);
 }

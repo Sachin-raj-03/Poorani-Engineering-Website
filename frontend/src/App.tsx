@@ -7,10 +7,12 @@ import {
   Menu, X, Phone, Mail, MapPin, Search,
   ArrowRight, CheckCircle2, 
   Send, Factory, Package, Users, Building2, MessageSquare, Clock,
-  ChevronLeft, ChevronRight, ShoppingCart, Info, Activity, Flame, Shield
+  ChevronLeft, ChevronRight, ShoppingCart, Info, Activity, Flame, Shield,
+  Sun, Moon
 } from 'lucide-react';
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { Footer } from "@/components/ui/footer-section";
+import NavMenu from "@/components/ui/menu-hover-effects";
 import {
   Stories,
   StoriesContent,
@@ -31,9 +33,12 @@ interface CategoryCardProps {
   onExplore?: () => void;
 }
 
+
+
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,6 +49,7 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
+    { name: 'Home', href: '/', isExternal: true },
     { name: 'Products', href: '/#products', isExternal: false },
     { name: 'About Us', href: '/about', isExternal: true },
     { name: 'Privacy Policy', href: '/privacy', isExternal: true },
@@ -53,79 +59,38 @@ const Navbar = () => {
 
   return (
     <nav className={`fixed w-full z-50 transition-all duration-500 ${
-      isScrolled ? 'bg-black/90 backdrop-blur-md border-b border-zinc-900 py-3' : 'bg-transparent py-5'
+      isScrolled ? 'bg-background/90 backdrop-blur-md border-b border-border py-3 shadow-sm' : 'bg-transparent py-5'
     }`}>
-      <div className="container mx-auto px-6 md:px-10 flex justify-between items-center">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="text-2xl md:text-3xl font-times font-bold tracking-tight text-white italic">
-            Poorani Engineering
-          </span>
+      <div className="w-full pl-[10px] pr-6 md:pr-12 flex justify-between items-center relative">
+        <Link 
+          to="/" 
+          className="flex items-center gap-4 z-10 hover:opacity-80 transition-opacity"
+        >
+          <img 
+            src="/Logo_bg/l1.png" 
+            alt="Logo" 
+            className="w-12 h-12 md:w-20 md:h-20 object-contain"
+          />
+          <img 
+            src="/Logo_bg/l2.png" 
+            alt="Branding" 
+            className="h-10 md:h-16 object-contain brightness-110"
+          />
         </Link>
 
-        <div className="hidden md:flex items-center gap-10">
-          {navLinks.map((link) => (
-            link.isExternal ? (
-              <Link
-                key={link.name}
-                to={link.href}
-                className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-white transition-colors"
-              >
-                {link.name}
-              </Link>
-            ) : (
-              <a
-                key={link.name}
-                href={link.href}
-                className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-white transition-colors"
-              >
-                {link.name}
-              </a>
-            )
-          ))}
+        <div className="flex items-center gap-6 self-center">
+          <NavMenu 
+            tabs={navLinks} 
+            onTabClick={(tab) => {
+              if (tab.isExternal) {
+                navigate(tab.href);
+              } else {
+                window.location.href = tab.href;
+              }
+            }}
+          />
         </div>
-
-        <button 
-          className="md:hidden text-white p-2"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
       </div>
-
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-zinc-950 border-b border-zinc-900 overflow-hidden"
-          >
-            <div className="flex flex-col p-6 gap-6">
-              {navLinks.map((link) => (
-                link.isExternal ? (
-                  <Link
-                    key={link.name}
-                    to={link.href}
-                    className="text-xs font-black uppercase tracking-widest text-zinc-400 focus:text-white"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.name}
-                  </Link>
-                ) : (
-                  <a
-                    key={link.name}
-                    href={link.href}
-                    className="text-xs font-black uppercase tracking-widest text-zinc-400 focus:text-white"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.name}
-                  </a>
-                )
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </nav>
   );
 };
@@ -164,10 +129,304 @@ const CategoryPage = () => {
     "Appam Patra(Paniyaram Adupu)": "Premium appam patra crafted for efficient and uniform cooking. Made from high-quality materials, it ensures durability and heat distribution, making it ideal for commercial kitchens while offering consistent results, easy maintenance, and long-lasting performance."
   };
 
+  // Technical specifications for categories
+  const technicalSpecs: Record<string, {
+    name: string;
+    category: string;
+    grade: string;
+    standard: string;
+    dimensions: string;
+    features: string[];
+  }> = {
+    "Display counter": {
+      name: "Display Counter",
+      category: "Food & Bakery Display",
+      grade: "SS 304 / 202 Grade",
+      standard: "Industrial Mirror/Matt Finish",
+      dimensions: "60 × 21 × 46 inches (L×W×H)\n(Custom size available as per requirement)",
+      features: [
+        "Multiple SS Grades (304 / 202)",
+        "Heavy-duty Frame & Strong Base",
+        "Mirror / Matte / Brushed Finish",
+        "Glass & LED Display Options",
+        "Multi-shelf Storage System",
+        "Low Maintenance & Easy Cleaning"
+      ]
+    },
+    "Tea stall": {
+      name: "Tea Stall Counter",
+      category: "Beverage & Commercial Kitchen",
+      grade: "SS 304 / 202  Grade",
+      standard: "Heat-Resistant Work Surface",
+      dimensions: "60 × 30 × 30 inches (L×W×H)\n(Custom size available as per requirement)",
+      features: [
+        "Designed for Tea Stall & Beverage Use",
+        "Compact Yet Spacious Work Area",
+        "Heat & Corrosion Resistant Surface",
+        "Under-counter Storage & Provision for Cylinder",
+        "Matt / Mirror Finish",
+        "Strong & Long-lasting Construction"
+      ]
+    },
+    "Juice stall": {
+      name: "Juice Stall Counter",
+      category: "Beverage & Food Service",
+      grade: "SS 304 / 202 Grade",
+      standard: "Hygienic & Moisture Resistant",
+      dimensions: "60 × 27 × 30 inches (L×W×H)\n(Custom size available as per requirement)",
+      features: [
+        "Designed for Juice & Beverage Prep",
+        "Hygienic & Food-safe Surface",
+        "Resistant to Moisture & Fruit Acids",
+        "Compact and Efficient Workspace",
+        "Customizable Design & Storage Options",
+        "Strong, Durable & Long-lasting Construction"
+      ]
+    },
+    "Snacks counter": {
+      name: "Snacks Counter",
+      category: "Fast Food & Snacks",
+      grade: "SS 304 / 202 Grade",
+      standard: "Multi-Purpose Display",
+      dimensions: "48 × 24 × 30 inches (L×W×H)\n(Custom size available as per requirement)",
+      features: [
+        "Available in SS 304 / 202 Grades",
+        "Glass Display & Storage Shelves",
+        "Durable Construction for Daily Use",
+        "Professional Mirror / Matte Finish",
+        "Optional LED Lighting Integration",
+        "Easy to Clean & Maintain"
+      ]
+    },
+    "Dining table": {
+      name: "Dining Table Top SS / Granite / Glass",
+      category: "Commercial Furniture",
+      grade: "SS 304 / 202 Grade",
+      standard: "Heavy Duty Construction",
+      dimensions: "36 × 24 × 30 inches\(4-Seater Bakery Table)\n 48 × 36 × 30 inches (4-Seater Restaurant Table)\n72 × 36 × 30 inches(6-Seater Restaurant Table)\n(Custom size available as per requirement)",
+      features: [
+        "Premium SS 304 / 202 Grades",
+        "High Load Bearing Capacity",
+        "Anti-Wobble Design & Sturdy Base",
+        "Rust-proof & Heat Resistant Top",
+        "Smooth Edges for Safety",
+        "Modern Industrial Aesthetic"
+      ]
+    },
+    "Working table": {
+      name: "SS Working Table",
+      category: "Commercial Kitchen Prep",
+      grade: "SS 304 / 202 Grade",
+      standard: "Reinforced Work Surface",
+      dimensions: "60 × 30 × 34 inches (L×W×H)\n(Custom size available as per requirement)",
+      features: [
+        "Heavy-duty SS 304 / 202 Construction",
+        "Reinforced Under-shelf for Storage",
+        "Adjustable Bullet Feet for Leveling",
+        "Sound-Deadened Work Top",
+        "Corrosion & Scratch Resistant",
+        "Standard Kitchen Height Design"
+      ]
+    },
+    "Hand wash Sink": {
+      name: "SS Hand Wash Sink",
+      category: "Sanitary & Hygiene",
+      grade: "SS 304 Premium Grade",
+      standard: "Deep Bowl Construction",
+      dimensions: "From Single Tap to N Tap Available\n(Custom size available as per requirement)",
+      features: [
+        "Pure SS 304 for Superior Hygiene",
+        "Deep Single Bowl Design",
+        "Integrated Splash-guard Bnck",
+        "Anti-clogging Drain System",
+        "Mirror Finish for Professional Look",
+        "Wall-mount or Floor-standing Options"
+      ]
+    },
+    "Dosa Kal": {
+      name: "SS Dosa Kal (Burner Included)",
+      category: "Industrial Kitchen Equipment",
+      grade: "SS Frame with MS/Cast Iron Top",
+      standard: "High Heat Tolerance",
+      dimensions: "60 × 30 × 30 inches\n48 × 30 × 30 inches\n36 × 30 × 30 inches\n(Custom size available as per requirement)",
+      features: [
+        "Industrial High-Pressure Burners",
+        "Thick Polished MS / Cast Iron Plate",
+        "Heavy Duty SS 304 / 202 Frame",
+        "Waste Oil Collection Trough",
+        "Independent Burner Controls",
+        "Even Heat Distribution Design"
+      ]
+    },
+    "Bainmarie counter": {
+      name: "SS Bainmarie Counter",
+      category: "Food Warmer & Serving",
+      grade: "SS 304 Grade",
+      standard: "Thermal Insulated Body",
+      dimensions: "4 Bowl / 6 Bowl / 8 Bowl\n(Custom size available as per requirement)",
+      features: [
+        "SS 304 Construction for Water Tank",
+        "Hot Water Bath Heating System",
+        "Standard G/N Pan Compatibility",
+        "Temperature Control Thermostat",
+        "Insulated Body for Heat Retention"
+      ]
+    },
+    "Oven": {
+      name: "Commercial Deck Oven",
+      category: "Bakery Equipment",
+      grade: "SS & MS Exterior / Insulated Body",
+      standard: "Precision Heating (250-400°C)",
+      dimensions: "16 Tray / 12 Tray / 9 Tray \n(Custom size available as per requirement)",
+      features: [
+        "Advanced Heat Retention Design",
+        "High-Grade Heating Elements",
+        "Analog Temp Controls",
+        "Stainless Steel Professional Exterior",
+        "Large Baking Capacity"
+      ]
+    },
+    "Cake machine": {
+      name: "Commercial Cake Machine",
+      category: "Bakery Equipment",
+      grade: "SS Bowl",
+      standard: "Manual & Gear(4-Speed)",
+      dimensions: "10Kg and 20 Kg\n(Custom size available as per requirement)",
+      features: [
+        "Planetary Mixing Action",
+        "SS 304 Mixing Bowl & Tools",
+        "Powerful Industrial Motor",
+        "Safety Guard Integration",
+        "Sturdy Base for Vibration Control",
+        "Easy-to-Clean Components"
+      ]
+    },
+    "Domixer": {
+      name: "SS Dough Mixer",
+      category: "Bakery Equipment",
+      grade: "SS Bowl",
+      standard: "Heavy Duty",
+      dimensions: "40kg Capacity",
+      features: [
+        "SS Mixing Bowl & Arms",
+        "High Torque Industrial Motor",
+        "Reinforced Steel Body",
+        "Low Maintenance Belt/Gear Drive",
+        "Designed for Intensive Kneading"
+      ]
+    },
+    "Triple range burner": {
+      name: "Triple Range Burner",
+      category: "Industrial Kitchen",
+      grade: "Heavy Duty SS Frame",
+      standard: "High-Pressure LPG",
+      dimensions: "72 × 24 × 30 inches (Standard)\n(Custom size available as per requirement)",
+      features: [
+        "Three High-Efficiency Burners",
+        "Robust SS 304 / 202 Frame",
+        "Heavy Cast Iron Pan Support",
+        "Independent Gas Controls",
+        "Spillage Collection Tray",
+        "Adjustable Feet for Stability"
+      ]
+    },
+    "Hotbox": {
+      name: "SS & MS Hotbox",
+      category: "Food Storage & Catering",
+      grade: "SS 304 / 202",
+      standard: "Heat Insulation",
+      dimensions: "8 Tray / 6 Tray /4 Tary / 2 Tray\n(Custom size available as per requirement)",
+      features: [
+        "Thermal Insulation",
+        "Interior for Food Safety",
+        "Heavy Duty Airtight Door Gaskets",
+        "Superior Heat Retention Performance",
+        "Corrosion Resistant Mirror Finish"
+      ]
+    },
+    "Folding table": {
+      name: "SS Folding Table",
+      category: "Catering & Events",
+      grade: "SS 304 / 202 Grade",
+      standard: "Portable Design",
+      dimensions: "48 × 24 × 30 inches (Standard)\n(Custom size available as per requirement)",
+      features: [
+        "Heavy Duty Stainless Steel Top",
+        "Space-Saving Folding Mechanism",
+        "Reinforced Hinges & Locks",
+        "Lightweight Yet Sturdy Build",
+        "Rust-proof for Outdoor Use",
+        "Easy to Transport & Store"
+      ]
+    },
+    "Shawarma machine": {
+      name: "SS Shawarma Machine",
+      category: "Fast Food Equipment",
+      grade: "SS 304 Body",
+      standard: "Motorized Rotation",
+      dimensions: "Single / Double Burner Options\n(Custom size available as per requirement)",
+      features: [
+        "Industrial Grade Ceramic Burners",
+        "Motorized Meat Skewer Rotation",
+        "Drip Tray for Oil Collection",
+        "Heat Control Regulators",
+        "Easy Cleaning SS Surfaces",
+        "Compact Counter-top Design"
+      ]
+    },
+    "Double range burner": {
+      name: "Double Range Burner",
+      category: "Industrial Kitchen",
+      grade: "Heavy Duty SS Frame",
+      standard: "High-Pressure Burners",
+      dimensions: "36 × 18 × 30 inches (Standard)\n(Custom size available as per requirement)",
+      features: [
+        "Dual High-Efficiency Burners",
+        "Heavy SS 304 / 202 Chassis",
+        "Strong Cast Iron Grills",
+        "Removable Spill Trays",
+        "Ergonomic Control Knobs",
+        "Industrial Grade Stability"
+      ]
+    },
+    "Single range burner": {
+      name: "Single Range Burner",
+      category: "Industrial Kitchen",
+      grade: "Heavy Duty SS Frame",
+      standard: "LPG / PNG Compatible",
+      dimensions: "24 × 24 × 16 inches (Standard)\n(Custom size available as per requirement)",
+      features: [
+        "Single High-Pressure Burner",
+        "Reinforced SS Construction",
+        "Large Vessel Support Design",
+        "Portable and Compact Layout",
+        "Easy-to-Clean SS Body",
+        "Industrial Safety Standards"
+      ]
+    },
+    "Fastfood counter": {
+      name: "Fastfood Counter",
+      category: "Fast Food & Restaurant",
+      grade: "SS 304 / 202 Grade",
+      standard: "Hygienic Prep Surface",
+      dimensions: "60 × 30 × 34 inches (Standard)\n(Custom size available as per requirement)",
+      features: [
+        "Integrated Prep & Serving Area",
+        "Multiple Storage Under-shelves",
+        "Rust-proof & Heat Resistant Surface",
+        "Optional Pan Integration Cuts",
+        "Sleek Mirror / Brushed Finish",
+        "Heavy Duty Load-Bearing Frame"
+      ]
+    }
+  };
+
   const [errorStatus, setErrorStatus] = useState<string | null>(null);
 
   const commonDescription = categoryDescriptions[categoryName || ""] || 
     `Discover our premium range of ${categoryName} manufacturing equipment. Precisely engineered for maximum durability, commercial hygiene, and everyday operational efficiency. All products adapt perfectly to intensive industrial usage, ensuring long-lasting performance and sleek integration into your professional environment.`;
+
+  const currentSpecs = technicalSpecs[categoryName || ""];
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -213,11 +472,11 @@ const CategoryPage = () => {
   }, [selectedIndex, products.length]);
 
   return (
-    <div className="min-h-screen bg-black text-white py-32 px-6 md:px-10">
+    <div className="min-h-screen bg-background text-foreground py-32 px-6 md:px-10">
       <div className="container mx-auto">
         <button 
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors mb-12 uppercase text-[10px] font-black tracking-widest group"
+          className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-12 uppercase text-[10px] font-black tracking-widest group"
         >
           <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Home
         </button>
@@ -228,18 +487,18 @@ const CategoryPage = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter mb-4 leading-none italic font-times">{categoryName}</h1>
-            <div className="w-32 h-2 bg-blue-600 rounded-full" />
+            <h1 className="text-5xl md:text-8xl font-bold uppercase tracking-tighter mb-4 leading-none italic font-times text-foreground">{categoryName}</h1>
+            <div className="w-32 h-2 bg-primary rounded-full" />
           </motion.div>
 
           <div className="relative w-full md:w-80 group">
-            <div className="absolute inset-0 bg-blue-600/10 blur-lg group-focus-within:bg-blue-600/30 transition-all duration-500 rounded-full" />
-            <div className="relative flex items-center bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 focus-within:border-blue-600/50 transition-all backdrop-blur-sm">
-              <Search className="w-4 h-4 text-zinc-500 mr-3 group-focus-within:text-blue-500 transition-colors" />
+            <div className="absolute inset-0 bg-primary/10 blur-lg group-focus-within:bg-primary/30 transition-all duration-500 rounded-full" />
+            <div className="relative flex items-center bg-secondary/50 border border-border rounded-xl px-4 py-3 focus-within:border-primary/50 transition-all backdrop-blur-sm shadow-sm">
+              <Search className="w-4 h-4 text-muted-foreground mr-3 group-focus-within:text-primary transition-colors" />
               <input 
                 type="text" 
                 placeholder="Search gallery..." 
-                className="bg-transparent border-none outline-none text-white w-full font-bold uppercase text-[9px] tracking-widest placeholder:text-zinc-600"
+                className="bg-transparent border-none outline-none text-foreground w-full font-bold uppercase text-[9px] tracking-widest placeholder:text-muted-foreground"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -247,10 +506,23 @@ const CategoryPage = () => {
           </div>
         </div>
 
-        <div className="flex items-center justify-between mb-10 border-b border-zinc-900 pb-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-12 max-w-4xl overflow-hidden rounded-[2.5rem] border border-border bg-secondary shadow-sm"
+        >
+          <div className="p-8 md:p-12">
+            <h3 className="text-[10px] font-black uppercase tracking-widest text-primary mb-8">Category Overview</h3>
+            <p className="text-foreground text-lg font-bold tracking-tight leading-relaxed italic">
+              {commonDescription}
+            </p>
+          </div>
+        </motion.div>
+
+        <div className="flex items-center justify-between mb-10 border-b border-border pb-10">
            <div>
-              <h2 className="text-2xl font-black uppercase tracking-tight mb-2">Product Gallery</h2>
-              <p className="text-zinc-600 text-xs font-bold uppercase tracking-widest italic">
+              <h2 className="text-2xl font-black uppercase tracking-tight mb-2 text-foreground">Product Gallery</h2>
+              <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest italic">
                 {searchQuery 
                   ? `${filteredProducts.length} Results for "${searchQuery}"`
                   : `${products.length} Items Available`
@@ -258,7 +530,7 @@ const CategoryPage = () => {
               </p>
            </div>
            <div className="flex gap-4">
-              <div className="w-10 h-10 rounded-full border border-zinc-800 flex items-center justify-center text-zinc-600"><Activity size={16}/></div>
+              <div className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-primary bg-secondary shadow-sm"><Activity size={16}/></div>
            </div>
         </div>
 
@@ -268,11 +540,11 @@ const CategoryPage = () => {
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-3xl"
+              className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-white/80 backdrop-blur-3xl"
               onClick={() => setSelectedIndex(null)}
             >
               <button 
-                className="absolute top-4 right-4 md:top-8 md:right-8 text-white/50 hover:text-white transition-colors z-[110] p-3 md:p-4 bg-zinc-900/50 rounded-full border border-zinc-800"
+                className="absolute top-4 right-4 md:top-8 md:right-8 text-black/50 hover:text-black transition-colors z-[110] p-3 md:p-4 bg-white/50 rounded-full border border-border"
                 onClick={() => setSelectedIndex(null)}
               >
                 <X className="w-6 h-6 md:w-8 md:h-8" />
@@ -280,7 +552,7 @@ const CategoryPage = () => {
 
               {/* Navigation Buttons - Responsive Sizing */}
               <button 
-                className={`absolute left-2 md:left-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors z-[110] p-3 md:p-4 bg-zinc-900/50 rounded-full border border-zinc-800 ${selectedIndex === 0 ? 'opacity-20 cursor-not-allowed' : 'opacity-100'}`}
+                className={`absolute left-2 md:left-8 top-1/2 -translate-y-1/2 text-black/50 hover:text-black transition-colors z-[110] p-3 md:p-4 bg-white/50 rounded-full border border-border ${selectedIndex === 0 ? 'opacity-20 cursor-not-allowed' : 'opacity-100'}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   if (selectedIndex !== null && selectedIndex > 0) setSelectedIndex(selectedIndex - 1);
@@ -290,7 +562,7 @@ const CategoryPage = () => {
               </button>
 
               <button 
-                className={`absolute right-2 md:right-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors z-[110] p-3 md:p-4 bg-zinc-900/50 rounded-full border border-zinc-800 ${selectedIndex === products.length - 1 ? 'opacity-20 cursor-not-allowed' : 'opacity-100'}`}
+                className={`absolute right-2 md:right-8 top-1/2 -translate-y-1/2 text-black/50 hover:text-black transition-colors z-[110] p-3 md:p-4 bg-white/50 rounded-full border border-border ${selectedIndex === products.length - 1 ? 'opacity-20 cursor-not-allowed' : 'opacity-100'}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   if (selectedIndex !== null && selectedIndex < products.length - 1) setSelectedIndex(selectedIndex + 1);
@@ -324,12 +596,12 @@ const CategoryPage = () => {
                   <img 
                     src={products[selectedIndex].image_url} 
                     alt="Full view" 
-                    className="max-w-full max-h-[70vh] object-contain rounded-2xl shadow-[0_0_100px_rgba(37,99,235,0.2)] border border-zinc-800/50 transition-all duration-500" 
+                    className="max-w-full max-h-[70vh] object-contain rounded-2xl shadow-[0_0_100px_rgba(37,99,235,0.1)] border border-border transition-all duration-500" 
                   />
                 </div>
 
                 {/* Thumbnail Strip */}
-                <div className="flex items-center gap-3 px-4 py-4 bg-zinc-900/30 backdrop-blur-md rounded-2xl border border-zinc-800/50 max-w-full overflow-x-auto no-scrollbar" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center gap-3 px-4 py-4 bg-white/30 backdrop-blur-md rounded-2xl border border-border max-w-full overflow-x-auto no-scrollbar" onClick={(e) => e.stopPropagation()}>
                     {products.map((p, i) => (
                         <button
                             key={i}
@@ -344,7 +616,7 @@ const CategoryPage = () => {
                 </div>
 
                 <div className="text-center">
-                   <p className="text-zinc-500 text-[10px] uppercase font-black tracking-[0.5em]">
+                   <p className="text-muted-foreground text-[10px] uppercase font-black tracking-[0.5em]">
                      Poorani Engineering Works • Image {selectedIndex + 1} of {products.length}
                    </p>
                 </div>
@@ -355,7 +627,7 @@ const CategoryPage = () => {
 
         {loading ? (
           <div className="flex items-center justify-center h-64 mb-20">
-            <div className="w-12 h-12 border-4 border-zinc-800 border-t-blue-600 rounded-full animate-spin" />
+            <div className="w-12 h-12 border-4 border-border border-t-primary rounded-full animate-spin" />
           </div>
         ) : filteredProducts.length > 0 ? (
           <Stories className="mb-20">
@@ -385,39 +657,72 @@ const CategoryPage = () => {
             </StoriesContent>
           </Stories>
         ) : (
-          <div className="text-center py-32 bg-zinc-900/30 rounded-[3rem] border border-zinc-800 border-dashed mb-20">
-            <Package className="w-16 h-16 text-zinc-800 mx-auto mb-6 opacity-50" />
-            <p className="text-zinc-600 uppercase text-xs font-black tracking-widest italic">
+          <div className="text-center py-32 bg-secondary/50 rounded-[3rem] border border-border border-dashed mb-20">
+            <Package className="w-16 h-16 text-muted-foreground mx-auto mb-6 opacity-50" />
+            <p className="text-muted-foreground uppercase text-xs font-black tracking-widest italic">
               {products.length === 0 ? "Gallery empty for this category" : `No results for "${searchQuery}"`}
             </p>
             {products.length > 0 && (
               <button 
                 onClick={() => setSearchQuery("")}
-                className="mt-8 bg-zinc-800 text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-zinc-700 transition-all"
+                className="mt-8 bg-foreground text-background px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-primary transition-all shadow-lg"
               >
                 Clear Search
               </button>
             )}
             {products.length === 0 && (
-              <button className="mt-8 bg-zinc-800 text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-zinc-700 transition-all">
+              <button className="mt-8 bg-foreground text-background px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-primary transition-all shadow-lg">
                 Request Catalog
               </button>
             )}
           </div>
         )}
 
-        <motion.div
-           initial={{ opacity: 0, y: 20 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           viewport={{ once: true }}
-           className="bg-zinc-900/40 border border-zinc-800/50 p-8 md:p-12 rounded-[2rem] backdrop-blur-sm relative overflow-hidden group max-w-4xl"
-        >
+        {currentSpecs && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-12 max-w-4xl overflow-hidden rounded-[2.5rem] border border-border bg-secondary shadow-sm"
+          >
+            <div className="p-8 md:p-12">
+              <h3 className="text-[10px] font-black uppercase tracking-widest text-primary mb-8">Technical Specifications</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div className="space-y-6">
+                  {[
+                    { label: "Product Name", value: currentSpecs.name },
+                    { label: "Category", value: currentSpecs.category },
+                    { label: "Grade", value: currentSpecs.grade },
+                    { label: "Standard", value: currentSpecs.standard },
+                    { label: "Size/Dimensions", value: currentSpecs.dimensions }
+                  ].map((spec, i) => (
+                    <div key={i} className="border-b border-border pb-4 group">
+                      <span className="text-muted-foreground text-[10px] uppercase font-black tracking-widest block mb-1 group-hover:text-primary transition-colors">{spec.label}</span>
+                      <span className="text-foreground text-lg font-bold tracking-tight whitespace-pre-line">{spec.value}</span>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="bg-background rounded-2xl p-8 border border-border relative overflow-hidden group shadow-inner">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-8 flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary" /> Key Features
+                  </h4>
+                  <ul className="space-y-5">
+                    {currentSpecs.features.map((feature, i) => (
+                      <li key={i} className="flex items-center gap-4">
+                        <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                        </div>
+                        <span className="text-foreground font-medium text-sm md:text-base">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
-          <h3 className="text-[10px] font-black uppercase tracking-widest text-blue-500 mb-4">Category Overview</h3>
-          <p className="text-zinc-400 text-lg md:text-xl font-medium leading-relaxed relative z-10">
-            {commonDescription}
-          </p>
-        </motion.div>
       </div>
     </div>
   );
@@ -425,13 +730,13 @@ const CategoryPage = () => {
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-black text-white">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-background text-foreground">
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/60 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-background/50 via-background/10 to-transparent z-10" />
         <img 
-          src="/landing_page.jpeg" 
+          src="/landing_page_white.png" 
           alt="Metal Fabrication Background"
-          className="w-full h-full object-cover opacity-60"
+          className="w-full h-full object-cover opacity-80"
         />
       </div>
 
@@ -442,12 +747,12 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
           >
-            <h1 className="text-4xl sm:text-5xl md:text-8xl font-bebas leading-none tracking-wider mb-6 md:mb-10 mt-16 md:mt-20 text-white uppercase">
+            <h1 className="text-4xl sm:text-5xl md:text-8xl font-bebas leading-none tracking-wider mb-6 md:mb-10 mt-16 md:mt-20 text-black uppercase drop-shadow-sm">
               Wholesale and <br /> 
-              <span className="text-zinc-600">Retail</span>
+              <span className="text-primary">Retail</span>
             </h1>
             
-            <p className="text-base md:text-xl text-zinc-400 max-w-xl leading-relaxed mb-10 md:mb-12 font-medium">
+            <p className="text-base md:text-xl text-black max-w-xl leading-relaxed mb-10 md:mb-12 font-medium border-l-2 border-primary/30 pl-6">
               We are leading manufacturer of comprehensive stainless steel products, specializing in high-performance equipment's For Bakeries, Hotels, Educational Institutions, Pavilion (Mandapam) And Commercial Kitchens Etc…!
             </p>
           </motion.div>
@@ -468,7 +773,7 @@ const CategoryModal = ({ category, onClose }: { category: any, onClose: () => vo
         initial={{ opacity: 0 }} 
         animate={{ opacity: 1 }} 
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-xl"
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-background/80 backdrop-blur-xl"
         onClick={onClose}
       >
         <motion.div 
@@ -476,27 +781,27 @@ const CategoryModal = ({ category, onClose }: { category: any, onClose: () => vo
           animate={{ y: 0, opacity: 1, scale: 1 }}
           exit={{ y: 20, opacity: 0, scale: 0.95 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-zinc-950 border border-zinc-800 w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl flex flex-col md:flex-row relative"
+          className="bg-secondary border border-border w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl flex flex-col md:flex-row relative"
         >
           <button 
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 hover:bg-white hover:text-black border border-zinc-800 rounded-full flex items-center justify-center text-zinc-400 transition-all backdrop-blur-md"
+            className="absolute top-4 right-4 z-10 w-10 h-10 bg-background/50 hover:bg-primary hover:text-white border border-border rounded-full flex items-center justify-center text-muted-foreground transition-all backdrop-blur-md shadow-sm"
           >
             <X size={20} />
           </button>
 
           {/* Left Side: Images */}
-          <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-zinc-800">
+          <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-border">
             <div className="w-full h-64 md:h-80 rounded-2xl overflow-hidden relative group shrink-0">
               <img src={category.img} alt={category.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-80" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80" />
             </div>
             {/* Gallery Placeholders */}
             <div className="grid grid-cols-3 gap-3">
               {[1, 2, 3].map((i) => (
-               <div key={i} className="aspect-square rounded-xl bg-zinc-900 border border-zinc-800 overflow-hidden flex items-center justify-center group cursor-pointer relative">
-                  <span className="text-zinc-600 text-[10px] font-black uppercase tracking-widest z-10 px-2 text-center leading-tight">Image<br/>{i}</span>
-                  <div className="absolute inset-0 bg-zinc-800/0 group-hover:bg-zinc-800/50 transition-colors" />
+               <div key={i} className="aspect-square rounded-xl bg-muted border border-border overflow-hidden flex items-center justify-center group cursor-pointer relative shadow-inner">
+                  <span className="text-muted-foreground text-[10px] font-black uppercase tracking-widest z-10 px-2 text-center leading-tight">Image<br/>{i}</span>
+                  <div className="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors" />
                </div>
               ))}
             </div>
@@ -504,31 +809,31 @@ const CategoryModal = ({ category, onClose }: { category: any, onClose: () => vo
 
           {/* Right Side: Details */}
           <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center">
-            <div className="w-16 h-16 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(59,130,246,0.1)]">
-               <category.icon className="w-8 h-8 text-blue-500" />
+            <div className="w-16 h-16 bg-muted border border-border rounded-2xl flex items-center justify-center mb-6 shadow-sm">
+               <category.icon className="w-8 h-8 text-primary" />
             </div>
-            <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight leading-none mb-6">
+            <h2 className="text-3xl md:text-5xl font-black text-foreground uppercase tracking-tight leading-none mb-6">
               {category.title}
             </h2>
-            <div className="w-20 h-1 bg-blue-600 rounded-full mb-8" />
+            <div className="w-20 h-1 bg-primary rounded-full mb-8" />
             
-            <p className="text-zinc-400 text-sm md:text-base leading-relaxed mb-8">
+            <p className="text-muted-foreground text-sm md:text-base leading-relaxed mb-8">
               Discover our premium <strong>{category.title}</strong>, precisely engineered for maximum durability, commercial hygiene, and everyday operational efficiency. All products adapt perfectly to intensive institutional usage, ensuring long-lasting performance and sleek integration into your professional environment.
             </p>
             
-            <div className="space-y-4 mb-10 bg-black/50 p-6 rounded-2xl border border-zinc-800/50">
-              <h4 className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Key Advantages</h4>
+            <div className="space-y-4 mb-10 bg-muted/30 p-6 rounded-2xl border border-border/50">
+              <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Key Advantages</h4>
               <ul className="space-y-4">
-                <li className="flex items-start gap-4 text-zinc-300">
-                  <div className="w-6 h-6 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0 mt-0.5"><CheckCircle2 className="w-4 h-4 text-blue-500" /></div>
+                <li className="flex items-start gap-4 text-foreground/80">
+                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5"><CheckCircle2 className="w-4 h-4 text-primary" /></div>
                   <span className="text-sm font-medium leading-tight">100% Commercial Grade Stainless Steel Material</span>
                 </li>
-                <li className="flex items-start gap-4 text-zinc-300">
-                  <div className="w-6 h-6 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0 mt-0.5"><CheckCircle2 className="w-4 h-4 text-blue-500" /></div>
+                <li className="flex items-start gap-4 text-foreground/80">
+                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5"><CheckCircle2 className="w-4 h-4 text-primary" /></div>
                   <span className="text-sm font-medium leading-tight">Precision Welded & Corrosion Resistant Finish</span>
                 </li>
-                <li className="flex items-start gap-4 text-zinc-300">
-                  <div className="w-6 h-6 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0 mt-0.5"><CheckCircle2 className="w-4 h-4 text-blue-500" /></div>
+                <li className="flex items-start gap-4 text-foreground/80">
+                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5"><CheckCircle2 className="w-4 h-4 text-primary" /></div>
                   <span className="text-sm font-medium leading-tight">Fully Customizable Dimensions tailored to space</span>
                 </li>
               </ul>
@@ -537,7 +842,7 @@ const CategoryModal = ({ category, onClose }: { category: any, onClose: () => vo
             <a 
               href="#inquiry" 
               onClick={onClose}
-              className="w-full bg-white text-black py-5 rounded-xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-blue-600 hover:text-white transition-all group shadow-[0_0_40px_rgba(255,255,255,0.1)]"
+              className="w-full bg-foreground text-background py-5 rounded-xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-primary hover:text-white transition-all group shadow-lg"
             >
               Request Custom Quote <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </a>
@@ -549,42 +854,34 @@ const CategoryModal = ({ category, onClose }: { category: any, onClose: () => vo
 };
 
 const CategoryCard = ({ title, img, items, icon: Icon, onExplore }: CategoryCardProps) => (
-  <div className="relative h-full rounded-2xl border border-zinc-800 p-1 md:p-1.5 transition-all group">
-    <GlowingEffect
-      spread={40}
-      glow={true}
-      disabled={false}
-      proximity={64}
-      inactiveZone={0.01}
-      borderWidth={2}
-    />
+  <div className="relative h-full rounded-2xl border border-border p-1 md:p-1.5 transition-all group shadow-sm hover:shadow-md">
     <motion.div 
       whileHover={{ y: -5 }}
       onClick={onExplore}
-      className="relative flex h-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 transition-all group-hover:bg-zinc-900 cursor-pointer"
+      className="relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-background bg-metallic transition-all group-hover:bg-accent/50 cursor-pointer"
     >
       {img && (
-        <div className="h-40 sm:h-52 md:h-72 lg:h-80 relative overflow-hidden rounded-t-xl transition-all duration-700 w-full shrink-0 border-b border-zinc-800">
+        <div className="h-40 sm:h-52 md:h-72 lg:h-80 relative overflow-hidden rounded-t-xl transition-all duration-700 w-full shrink-0 border-b border-border">
           <img src={img} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
-          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-700" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent opacity-90 group-hover:opacity-40 transition-opacity duration-700" />
         </div>
       )}
-      <div className="flex-1 py-4 px-4 md:py-6 md:px-6 flex flex-col justify-between min-h-[120px] md:min-h-[180px]">
+      <div className="flex-1 py-4 px-4 md:py-6 md:px-6 flex flex-col justify-between min-h-[100px] md:min-h-[180px]">
         <div className="flex flex-col items-center justify-center flex-1">
-          <h3 className="text-sm sm:text-base md:text-xl font-black mb-3 md:mb-6 text-white text-center uppercase tracking-tight leading-snug group-hover:text-blue-500 transition-colors">{title}</h3>
+          <h3 className="text-sm sm:text-base md:text-xl font-black mb-3 md:mb-6 text-foreground text-center uppercase tracking-tight leading-snug group-hover:text-primary transition-colors">{title}</h3>
         </div>
         {items && items.length > 0 && (
           <ul className="space-y-3 mb-8">
             {items.map(item => (
-              <li key={item} className="flex items-center gap-3 text-zinc-400">
-                <div className="w-1.5 h-1.5 rounded-full bg-zinc-700" />
+              <li key={item} className="flex items-center gap-3 text-muted-foreground">
+                <div className="w-1.5 h-1.5 rounded-full bg-border" />
                 <span className="text-xs font-bold uppercase tracking-widest">{item}</span>
               </li>
             ))}
           </ul>
         )}
         <div 
-          className="w-full py-3 md:py-4 rounded-xl border border-zinc-800 text-zinc-400 font-black text-[9px] md:text-xs uppercase tracking-widest group-hover:bg-white group-hover:text-black transition-all text-center">
+          className="w-full py-2 md:py-4 rounded-lg md:rounded-xl border border-border text-muted-foreground font-black text-[9px] md:text-xs uppercase tracking-widest group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all text-center shadow-sm">
           Explore Category
         </div>
       </div>
@@ -650,12 +947,12 @@ const Categories = () => {
   }, [selectedCategory]);
 
   return (
-    <section id="products" className="py-16 md:py-32 bg-zinc-950 relative">
+    <section id="products" className="py-16 md:py-32 bg-secondary relative">
       <div className="container mx-auto px-4 sm:px-6 md:px-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-20 gap-8">
           <div className="text-left max-w-5xl">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 md:mb-6 uppercase tracking-tight">Our Products</h2>
-            <div className="space-y-4 text-zinc-500 text-sm md:text-base font-medium leading-relaxed">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 md:mb-6 uppercase tracking-tight">Our Products</h2>
+            <div className="space-y-4 text-muted-foreground text-sm md:text-base font-medium leading-relaxed">
               <p>
                 We offer a wide range of premium stainless steel products designed for durability, hygiene, and performance. Our products include bakery equipment, food counters, commercial kitchen solutions, dining and working tables, seating systems, storage racks, trolleys, and customized fabrication items.
               </p>
@@ -669,20 +966,20 @@ const Categories = () => {
           </div>
           
           <div className="relative w-full md:w-96 group">
-            <div className="absolute inset-0 bg-blue-600/20 blur-xl group-focus-within:bg-blue-600/40 transition-all duration-500 rounded-full" />
-            <div className="relative flex items-center bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-4 focus-within:border-blue-600/50 transition-all">
-              <Search className="w-5 h-5 text-zinc-500 mr-4 group-focus-within:text-blue-500 transition-colors" />
+            <div className="absolute inset-0 bg-primary/20 blur-xl group-focus-within:bg-primary/40 transition-all duration-500 rounded-full" />
+            <div className="relative flex items-center bg-background border border-border rounded-2xl px-5 py-4 focus-within:border-primary/50 transition-all shadow-sm">
+              <Search className="w-5 h-5 text-muted-foreground mr-4 group-focus-within:text-primary transition-colors" />
               <input 
                 type="text" 
                 placeholder="Search for products..." 
-                className="bg-transparent border-none outline-none text-white w-full font-bold uppercase text-[10px] tracking-widest placeholder:text-zinc-600"
+                className="bg-transparent border-none outline-none text-foreground w-full font-bold uppercase text-[10px] tracking-widest placeholder:text-muted-foreground"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               {searchQuery && (
                 <button 
                   onClick={() => setSearchQuery("")}
-                  className="text-zinc-600 hover:text-white transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <X size={16} />
                 </button>
@@ -714,9 +1011,9 @@ const Categories = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center py-24 bg-zinc-900/20 rounded-[3rem] border border-zinc-800 border-dashed">
-            <Package className="w-16 h-16 text-zinc-800 mx-auto mb-6 opacity-50" />
-            <p className="text-zinc-600 uppercase text-xs font-black tracking-widest italic">We couldn't find any products matching your search</p>
+          <div className="text-center py-24 bg-secondary rounded-[3rem] border border-border border-dashed">
+            <Package className="w-16 h-16 text-foreground mx-auto mb-6 opacity-50" />
+            <p className="text-muted-foreground uppercase text-xs font-black tracking-widest italic">We couldn't find any products matching your search</p>
             <button 
               onClick={() => setSearchQuery("")}
               className="mt-8 text-blue-500 uppercase text-[10px] font-black tracking-widest hover:text-blue-400 transition-colors"
@@ -746,19 +1043,19 @@ const PrivacyPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black pt-32 pb-20">
+    <div className="min-h-screen bg-background pt-32 pb-20">
       <div className="container mx-auto px-6 md:px-10 max-w-4xl">
-        <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-12">Privacy <span className="text-zinc-600">Policy</span></h1>
+        <h1 className="text-4xl md:text-6xl font-black text-foreground uppercase tracking-tighter mb-12">Privacy <span className="text-muted-foreground/40">Policy</span></h1>
         
-        <div className="prose prose-invert prose-zinc max-w-none space-y-12">
+        <div className="prose prose-zinc max-w-none space-y-12">
           <section>
-            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">1. Introduction</h2>
-            <p className="text-zinc-400 leading-relaxed font-medium">Welcome to Poorani Engineering Works. We value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you visit our website.</p>
+            <h2 className="text-xl font-black text-primary uppercase tracking-widest mb-4">1. Introduction</h2>
+            <p className="text-muted-foreground leading-relaxed font-medium">Welcome to Poorani Engineering Works. We value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you visit our website.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">2. Information We Collect</h2>
-            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+            <h2 className="text-xl font-black text-primary uppercase tracking-widest mb-4">2. Information We Collect</h2>
+            <ul className="list-disc pl-5 text-muted-foreground space-y-2 font-medium">
               <li>Name, phone number, and email address</li>
               <li>Business or company details (if provided)</li>
               <li>Delivery address</li>
@@ -767,8 +1064,8 @@ const PrivacyPage = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">3. How We Use Your Information</h2>
-            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+            <h2 className="text-xl font-black text-primary uppercase tracking-widest mb-4">3. How We Use Your Information</h2>
+            <ul className="list-disc pl-5 text-muted-foreground space-y-2 font-medium">
               <li>Respond to your inquiries and provide customer support</li>
               <li>Process orders and communicate order updates</li>
               <li>Improve our products, services, and website</li>
@@ -777,8 +1074,8 @@ const PrivacyPage = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">4. Cookies and Tracking</h2>
-            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+            <h2 className="text-xl font-black text-primary uppercase tracking-widest mb-4">4. Cookies and Tracking</h2>
+            <ul className="list-disc pl-5 text-muted-foreground space-y-2 font-medium">
               <li>Our website may use cookies to enhance user experience.</li>
               <li>Cookies help us understand website traffic and improve functionality.</li>
               <li>You can choose to disable cookies through your browser settings.</li>
@@ -786,32 +1083,32 @@ const PrivacyPage = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">5. Data Sharing</h2>
-            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+            <h2 className="text-xl font-black text-primary uppercase tracking-widest mb-4">5. Data Sharing</h2>
+            <ul className="list-disc pl-5 text-muted-foreground space-y-2 font-medium">
               <li>We do not sell, trade, or rent your personal information.</li>
               <li>Your data may be shared with trusted third parties only for business purposes such as delivery services or payment processing.</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">6. Data Security</h2>
-            <p className="text-zinc-400 leading-relaxed font-medium">We take appropriate measures to protect your personal information from unauthorized access, misuse, or disclosure. However, no method of online transmission is 100% secure.</p>
+            <h2 className="text-xl font-black text-primary uppercase tracking-widest mb-4">6. Data Security</h2>
+            <p className="text-muted-foreground leading-relaxed font-medium">We take appropriate measures to protect your personal information from unauthorized access, misuse, or disclosure. However, no method of online transmission is 100% secure.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">8. Your Rights</h2>
-            <p className="text-zinc-400 leading-relaxed font-medium">You have the right to request access, correction, or deletion of your personal data. You may contact us at any time regarding your data.</p>
+            <h2 className="text-xl font-black text-primary uppercase tracking-widest mb-4">8. Your Rights</h2>
+            <p className="text-muted-foreground leading-relaxed font-medium">You have the right to request access, correction, or deletion of your personal data. You may contact us at any time regarding your data.</p>
           </section>
 
-          <section className="p-8 bg-zinc-900/30 rounded-3xl border border-zinc-800">
-            <h2 className="text-xl font-black text-white uppercase tracking-widest mb-6">9. Contact Us</h2>
-            <div className="space-y-4 text-zinc-400 font-bold">
-              <p className="flex items-center gap-3"><Mail className="w-5 h-5 text-blue-500" /> pooraniengg@gmail.com</p>
+          <section className="p-8 bg-secondary border border-border rounded-3xl">
+            <h2 className="text-xl font-black text-foreground uppercase tracking-widest mb-6">9. Contact Us</h2>
+            <div className="space-y-4 text-muted-foreground font-bold">
+              <p className="flex items-center gap-3"><Mail className="w-5 h-5 text-primary" /> pooraniengg@gmail.com</p>
               <div className="flex flex-col gap-2">
-                <p className="flex items-center gap-3"><Phone className="w-5 h-5 text-blue-500" /> +91 93845 43135</p>
+                <p className="flex items-center gap-3"><Phone className="w-5 h-5 text-primary" /> +91 93845 43135</p>
                 <p className="flex items-center gap-3 ml-8">+91 77088 44441</p>
               </div>
-              <p className="flex items-center gap-3"><MapPin className="w-5 h-5 text-blue-500" /> 3/60 D, Ramanujar Temple Road, Erumapalayam, Salem - 636015</p>
+              <p className="flex items-center gap-3"><MapPin className="w-5 h-5 text-primary" /> 3/60 D, Ramanujar Temple Road, Erumapalayam, Salem - 636015</p>
             </div>
           </section>
         </div>
@@ -826,24 +1123,24 @@ const TermsPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black pt-32 pb-20">
+    <div className="min-h-screen bg-background pt-32 pb-20">
       <div className="container mx-auto px-6 md:px-10 max-w-4xl">
-        <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-12">Terms & <span className="text-zinc-600">Conditions</span></h1>
+        <h1 className="text-4xl md:text-6xl font-black text-foreground uppercase tracking-tighter mb-12">Terms & <span className="text-muted-foreground/40">Conditions</span></h1>
         
-        <div className="prose prose-invert prose-zinc max-w-none space-y-12">
+        <div className="prose prose-zinc max-w-none space-y-12">
           <section>
             <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">1. Introduction</h2>
-            <p className="text-zinc-400 leading-relaxed font-medium">Welcome to Poorani Engineering Works. By accessing or using our website, you agree to be bound by these Terms and Conditions. If you do not agree, please do not use our website.</p>
+            <p className="text-muted-foreground leading-relaxed font-medium">Welcome to Poorani Engineering Works. By accessing or using our website, you agree to be bound by these Terms and Conditions. If you do not agree, please do not use our website.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">2. About Us</h2>
-            <p className="text-zinc-400 leading-relaxed font-medium">We are a manufacturing company specializing in stainless steel and glass products for bakeries, hostels, and commercial kitchens. Our products include (but are not limited to) storage units, display counters, racks, and custom equipment.</p>
+            <p className="text-muted-foreground leading-relaxed font-medium">We are a manufacturing company specializing in stainless steel and glass products for bakeries, hostels, and commercial kitchens. Our products include (but are not limited to) storage units, display counters, racks, and custom equipment.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">3. Use of Website</h2>
-            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+            <ul className="list-disc pl-5 text-muted-foreground space-y-2 font-medium">
               <li>You agree to use this website only for lawful purposes.</li>
               <li>You must not misuse this website or attempt unauthorized access.</li>
               <li>All content on this website is for general information only and may change without notice.</li>
@@ -852,7 +1149,7 @@ const TermsPage = () => {
 
           <section>
             <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">4. Product Information</h2>
-            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+            <ul className="list-disc pl-5 text-muted-foreground space-y-2 font-medium">
               <li>We strive to ensure all product details, images, and specifications are accurate.</li>
               <li>However, product images may show slight variations due to lighting, reflections (especially on stainless steel and glass surfaces), and display settings.</li>
               <li>The actual product may differ slightly from the images shown.</li>
@@ -862,7 +1159,7 @@ const TermsPage = () => {
 
           <section>
             <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">5. Orders and Payments</h2>
-            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+            <ul className="list-disc pl-5 text-muted-foreground space-y-2 font-medium">
               <li>Orders are confirmed only after approval and payment (full or partial).</li>
               <li>Prices are subject to change without prior notice.</li>
               <li>For custom manufacturing, advance payment may be required.</li>
@@ -871,7 +1168,7 @@ const TermsPage = () => {
 
           <section>
             <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">6. Delivery and Shipping</h2>
-            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+            <ul className="list-disc pl-5 text-muted-foreground space-y-2 font-medium">
               <li>Delivery timelines are estimates and may vary depending on production and location.</li>
               <li>We are not responsible for delays caused by external factors such as logistics or natural events.</li>
               <li>Customers must inspect products upon delivery.</li>
@@ -880,7 +1177,7 @@ const TermsPage = () => {
 
           <section>
             <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">7. Returns and Refunds</h2>
-            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+            <ul className="list-disc pl-5 text-muted-foreground space-y-2 font-medium">
               <li>Since most products are custom-made, returns may not be accepted unless there is a manufacturing defect.</li>
               <li>Any damage or defect must be reported within 2 days of delivery.</li>
               <li>Refunds, if applicable, will be processed based on company policy.</li>
@@ -889,7 +1186,7 @@ const TermsPage = () => {
 
           <section>
             <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">8. Warranty</h2>
-            <ul className="list-disc pl-5 text-zinc-400 space-y-2 font-medium">
+            <ul className="list-disc pl-5 text-muted-foreground space-y-2 font-medium">
               <li>Warranty (if provided) applies only to manufacturing defects.</li>
               <li>It does not cover damage caused by misuse, improper installation, or normal wear and tear.</li>
             </ul>
@@ -897,18 +1194,18 @@ const TermsPage = () => {
 
           <section>
             <h2 className="text-xl font-black text-blue-500 uppercase tracking-widest mb-4">9. Intellectual Property</h2>
-            <p className="text-zinc-400 leading-relaxed font-medium">All content, including images, logos, and designs, are the property of Poorani Engineering Works. Unauthorized use or reproduction is strictly prohibited.</p>
+            <p className="text-muted-foreground leading-relaxed font-medium">All content, including images, logos, and designs, are the property of Poorani Engineering Works. Unauthorized use or reproduction is strictly prohibited.</p>
           </section>
 
-          <section className="p-8 bg-zinc-900/30 rounded-3xl border border-zinc-800">
-            <h2 className="text-xl font-black text-white uppercase tracking-widest mb-6">10. Contact Us</h2>
-            <div className="space-y-4 text-zinc-400 font-bold">
-              <p className="flex items-center gap-3"><Mail className="w-5 h-5 text-blue-500" /> pooraniengg@gmail.com</p>
+          <section className="p-8 bg-secondary border border-border rounded-3xl shadow-sm">
+            <h2 className="text-xl font-black text-foreground uppercase tracking-widest mb-6">10. Contact Us</h2>
+            <div className="space-y-4 text-muted-foreground font-bold">
+              <p className="flex items-center gap-3"><Mail className="w-5 h-5 text-primary" /> pooraniengg@gmail.com</p>
               <div className="flex flex-col gap-2">
-                <p className="flex items-center gap-3"><Phone className="w-5 h-5 text-blue-500" /> +91 93845 43135</p>
+                <p className="flex items-center gap-3"><Phone className="w-5 h-5 text-primary" /> +91 93845 43135</p>
                 <p className="flex items-center gap-3 ml-8">+91 77088 44441</p>
               </div>
-              <p className="flex items-center gap-3"><MapPin className="w-5 h-5 text-blue-500" /> 3/60 D, Ramanujar Temple Road, Erumapalayam, Salem - 636015</p>
+              <p className="flex items-center gap-3"><MapPin className="w-5 h-5 text-primary" /> 3/60 D, Ramanujar Temple Road, Erumapalayam, Salem - 636015</p>
             </div>
           </section>
         </div>
@@ -923,24 +1220,24 @@ const AboutPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black pt-32 pb-20">
+    <div className="min-h-screen bg-background pt-32 pb-20">
       <div className="container mx-auto px-6 md:px-10 max-w-4xl">
-        <h1 className="text-5xl md:text-8xl font-black text-white uppercase tracking-tighter leading-none mb-12 italic font-times">
-          About <br /> <span className="text-zinc-600">Us</span>
+        <h1 className="text-5xl md:text-8xl font-black text-foreground uppercase tracking-tighter leading-none mb-12 italic font-times">
+          About <br /> <span className="text-muted-foreground/40">Us</span>
         </h1>
-        <div className="w-32 h-2 bg-blue-600 rounded-full mb-16" />
+        <div className="w-32 h-2 bg-primary rounded-full mb-16" />
 
         <div className="space-y-20">
           <section>
-            <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-6 border-l-4 border-blue-600 pl-6">Who We Are</h2>
-            <p className="text-zinc-400 text-xl leading-relaxed font-medium">
+            <h2 className="text-2xl font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-primary pl-6">Who We Are</h2>
+            <p className="text-muted-foreground text-xl leading-relaxed font-medium">
               Welcome to Poorani Engineering Works, a trusted manufacturer of high-quality stainless steel and glass products. We specialize in designing and producing durable, hygienic, and modern equipment for bakeries, hostels, and commercial kitchens.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-6 border-l-4 border-blue-600 pl-6">What We Do</h2>
-            <p className="text-zinc-400 text-lg mb-8 font-medium">At Poorani Engineering Works, we manufacture a wide range of products including:</p>
+            <h2 className="text-2xl font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-primary pl-6">What We Do</h2>
+            <p className="text-muted-foreground text-lg mb-8 font-medium">At Poorani Engineering Works, we manufacture a wide range of products including:</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                {[
                  "Bakery display counters",
@@ -949,36 +1246,36 @@ const AboutPage = () => {
                  "Hostel and industrial utility items",
                  "Custom-designed stainless steel and glass products"
                ].map((item, i) => (
-                 <div key={i} className="flex items-center gap-4 p-4 bg-zinc-900/30 border border-zinc-800 rounded-2xl">
-                    <CheckCircle2 size={18} className="text-blue-500 shrink-0" />
-                    <span className="text-zinc-300 font-bold uppercase text-xs tracking-widest">{item}</span>
+                <div key={i} className="flex items-center gap-4 p-4 bg-secondary border border-border rounded-2xl shadow-sm">
+                    <CheckCircle2 size={18} className="text-primary shrink-0" />
+                    <span className="text-foreground font-bold uppercase text-xs tracking-widest">{item}</span>
                  </div>
                ))}
             </div>
           </section>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <section className="p-10 bg-zinc-900/40 border border-zinc-800 rounded-[2.5rem]">
-              <h2 className="text-xl font-black text-white uppercase tracking-widest mb-6 flex items-center gap-3">
-                <Flame className="w-6 h-6 text-blue-500" /> Our Mission
+            <section className="p-10 bg-secondary border border-border rounded-[2.5rem] shadow-sm">
+              <h2 className="text-xl font-black text-foreground uppercase tracking-widest mb-6 flex items-center gap-3">
+                <Flame className="w-6 h-6 text-primary" /> Our Mission
               </h2>
-              <p className="text-zinc-400 leading-relaxed font-medium">
+              <p className="text-muted-foreground leading-relaxed font-medium">
                 Our mission is to deliver reliable, innovative, and cost-effective solutions that meet the needs of our customers while maintaining superior quality and craftsmanship.
               </p>
             </section>
 
-            <section className="p-10 bg-zinc-900/40 border border-zinc-800 rounded-[2.5rem]">
-              <h2 className="text-xl font-black text-white uppercase tracking-widest mb-6 flex items-center gap-3">
-                <Activity className="w-6 h-6 text-blue-500" /> Our Vision
+            <section className="p-10 bg-secondary border border-border rounded-[2.5rem] shadow-sm">
+              <h2 className="text-xl font-black text-foreground uppercase tracking-widest mb-6 flex items-center gap-3">
+                <Activity className="w-6 h-6 text-primary" /> Our Vision
               </h2>
-              <p className="text-zinc-400 leading-relaxed font-medium">
+              <p className="text-muted-foreground leading-relaxed font-medium">
                 To become a leading manufacturer in the stainless steel and glass industry by continuously improving our designs, technology, and customer satisfaction.
               </p>
             </section>
           </div>
 
           <section>
-            <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-8 border-l-4 border-blue-600 pl-6">Why Choose Us</h2>
+            <h2 className="text-2xl font-black text-foreground uppercase tracking-widest mb-8 border-l-4 border-primary pl-6">Why Choose Us</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                {[
                  { title: "High-quality materials", desc: "Stainless steel & glass" },
@@ -987,9 +1284,9 @@ const AboutPage = () => {
                  { title: "Timely delivery", desc: "Manufacturing speed" },
                  { title: "Customer focused", desc: "Your satisfaction first" }
                ].map((item, i) => (
-                 <div key={i} className="p-6 bg-zinc-900/20 border border-zinc-800/50 rounded-2xl hover:bg-zinc-900/40 transition-colors group text-center">
-                    <h3 className="text-white font-black uppercase text-xs tracking-widest mb-2 group-hover:text-blue-500 transition-colors">{item.title}</h3>
-                    <p className="text-zinc-600 text-[10px] font-black uppercase tracking-tighter">{item.desc}</p>
+                 <div key={i} className="p-6 bg-secondary border border-border/50 rounded-2xl hover:bg-accent/50 transition-colors group text-center shadow-sm">
+                    <h3 className="text-foreground font-black uppercase text-xs tracking-widest mb-2 group-hover:text-primary transition-colors">{item.title}</h3>
+                    <p className="text-muted-foreground text-[10px] font-black uppercase tracking-tighter">{item.desc}</p>
                  </div>
                ))}
             </div>
@@ -1002,16 +1299,16 @@ const AboutPage = () => {
             </p>
           </section>
 
-          <section className="p-12 bg-zinc-900/30 rounded-[3rem] border border-zinc-800">
-            <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-10">Contact Us</h2>
-            <p className="text-zinc-500 font-bold mb-8 uppercase text-xs tracking-widest italic">We would love to work with you and support your business needs.</p>
-            <div className="space-y-6 text-zinc-300 font-bold">
-              <p className="flex items-center gap-4"><Mail className="w-6 h-6 text-blue-500" /> pooraniengg@gmail.com</p>
+          <section className="p-12 bg-secondary rounded-[3rem] border border-border shadow-sm">
+            <h2 className="text-2xl font-black text-foreground uppercase tracking-widest mb-10">Contact Us</h2>
+            <p className="text-muted-foreground font-bold mb-8 uppercase text-xs tracking-widest italic">We would love to work with you and support your business needs.</p>
+            <div className="space-y-6 text-foreground font-bold">
+              <p className="flex items-center gap-4"><Mail className="w-6 h-6 text-primary" /> pooraniengg@gmail.com</p>
               <div className="flex flex-col gap-3">
-                <p className="flex items-center gap-4"><Phone className="w-6 h-6 text-blue-500" /> +91 93845 43135</p>
+                <p className="flex items-center gap-4"><Phone className="w-6 h-6 text-primary" /> +91 93845 43135</p>
                 <p className="flex items-center gap-4 ml-10">+91 77088 44441</p>
               </div>
-              <p className="flex items-center gap-4"><MapPin className="w-6 h-6 text-blue-500" /> 3/60 D, Ramanujar Temple Road, Erumapalayam, Salem - 636015</p>
+              <p className="flex items-center gap-4"><MapPin className="w-6 h-6 text-primary" /> 3/60 D, Ramanujar Temple Road, Erumapalayam, Salem - 636015</p>
             </div>
           </section>
         </div>
@@ -1020,52 +1317,16 @@ const AboutPage = () => {
   );
 };
 
-const AboutUs = () => {
-  return (
-    <section id="mission" className="py-24 md:py-32 bg-black relative overflow-hidden">
-      <div className="container mx-auto px-6 md:px-10 relative z-10">
-        <div className="flex flex-col md:flex-row gap-16 items-center">
-          <div className="w-full md:w-1/2">
-             <h4 className="text-[10px] font-black uppercase tracking-[0.5em] text-blue-500 mb-6">Since 2004</h4>
-             <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-none mb-10">
-               Engineering Excellence in <span className="text-zinc-500">Stainless Steel</span>
-             </h2>
-             <div className="space-y-6 text-zinc-400 text-lg leading-relaxed font-medium">
-               <p>
-                 Poorani Engineering Works is a leading manufacturer of comprehensive stainless steel products, specializing in high-performance equipment for Bakeries, Hotels, Educational Institutions, and Commercial Kitchens.
-               </p>
-               <p>
-                 Our commitment to using premium SS 304 grade materials ensures that every product we build meets the highest standards of durability and hygiene.
-               </p>
-             </div>
-          </div>
-          <div className="w-full md:w-1/2 grid grid-cols-2 gap-4">
-             <div className="p-8 bg-zinc-900/50 border border-zinc-800 rounded-3xl">
-                <Shield className="w-8 h-8 text-blue-500 mb-4" />
-                <h3 className="text-white font-black uppercase text-xs tracking-widest mb-2">Quality</h3>
-                <p className="text-zinc-500 text-sm">Certified SS 304 Grade material for life-long durability.</p>
-             </div>
-             <div className="p-8 bg-zinc-900/50 border border-zinc-800 rounded-3xl">
-                <Factory className="w-8 h-8 text-blue-500 mb-4" />
-                <h3 className="text-white font-black uppercase text-xs tracking-widest mb-2">Precision</h3>
-                <p className="text-zinc-500 text-sm">Advanced manufacturing for perfect dimensional accuracy.</p>
-             </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
 
 const Inquiry = () => {
   return (
-    <section id="inquiry" className="py-24 bg-zinc-950">
+    <section id="inquiry" className="py-24 bg-background border-t border-border">
       <div className="container mx-auto px-6 md:px-10 text-center">
-        <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-6">Ready to Work with Us?</h2>
-        <p className="text-zinc-500 text-xl mb-12 max-w-2xl mx-auto italic font-medium">Get a custom quote for your industrial kitchen or commercial project today.</p>
+        <h2 className="text-4xl md:text-6xl font-black text-foreground uppercase tracking-tighter mb-6">Ready to Work with Us?</h2>
+        <p className="text-muted-foreground text-xl mb-12 max-w-2xl mx-auto italic font-medium">Get a custom quote for your industrial kitchen or commercial project today.</p>
         <div className="flex flex-wrap justify-center gap-6">
-          <a href="tel:+919384543135" className="bg-white text-black px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all">Call Now</a>
-          <a href="mailto:pooraniengg@gmail.com" className="bg-zinc-900 text-white border border-zinc-800 px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-white hover:text-black transition-all">Send Email</a>
+          <a href="tel:+919384543135" className="bg-foreground text-background px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-lg">Call Now</a>
+          <a href="mailto:pooraniengg@gmail.com" className="bg-secondary text-foreground border border-border px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-foreground hover:text-background transition-all shadow-sm">Send Email</a>
         </div>
       </div>
     </section>
@@ -1087,7 +1348,7 @@ const WhatsAppButton = () => (
     >
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
     </svg>
-    <span className="absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-zinc-900 text-white text-[10px] font-black uppercase tracking-widest py-2.5 px-5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-zinc-800 pointer-events-none shadow-2xl backdrop-blur-md">
+    <span className="absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-secondary text-foreground text-[10px] font-black uppercase tracking-widest py-2.5 px-5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-border pointer-events-none shadow-2xl backdrop-blur-md">
       Chat with us
     </span>
   </a>
@@ -1095,8 +1356,9 @@ const WhatsAppButton = () => (
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-black font-sans">
+    <div className="min-h-screen bg-background font-sans text-foreground">
       <Navbar />
+      
       <Routes>
         <Route path="/" element={
           <>
