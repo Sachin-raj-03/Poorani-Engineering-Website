@@ -136,7 +136,7 @@ export const StoryImage = ({ className, alt, ...props }: StoryImageProps) => (
     className={cn(
       'absolute inset-0 h-full w-full object-cover',
       'transition-opacity duration-200',
-      'group-hover:opacity-90',
+      'group-hover:opacity-10',
       className
     )}
     {...props}

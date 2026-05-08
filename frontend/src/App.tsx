@@ -786,7 +786,7 @@ const CategoryModal = ({ category, onClose }: { category: any, onClose: () => vo
           <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-border">
             <div className="w-full h-64 md:h-80 rounded-2xl overflow-hidden relative group shrink-0">
               <img src={category.img} alt={category.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80" />
+              {/* Removed white overlay */}
             </div>
             {/* Gallery Placeholders */}
             <div className="grid grid-cols-3 gap-3">
@@ -854,8 +854,8 @@ const CategoryCard = ({ title, img, items, icon: Icon, onExplore }: CategoryCard
     >
       {img && (
         <div className="h-40 sm:h-52 md:h-72 lg:h-80 relative overflow-hidden rounded-t-xl transition-all duration-700 w-full shrink-0 border-b border-border">
-          <img src={img} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent opacity-90 group-hover:opacity-40 transition-opacity duration-700" />
+          <img src={img} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-100" />
+          {/* Removed white overlay */}
         </div>
       )}
       <div className="flex-1 py-4 px-4 md:py-6 md:px-6 flex flex-col justify-between min-h-[100px] md:min-h-[180px]">
